@@ -1,27 +1,68 @@
-.page{
-    margin:0;
-    min-height:100vh;
+body {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+  font-family: sans-serif;
+  font-size: 14px;
+}
+
+#parentDiv {
+  position: relative;
+}
+
+#scoreContainer {
+  position: absolute;
+  z-index: 10;
+  color: white;
+  left: 10px;
+  top: 10px;
+  margin: 0;
+  display: none;
+}
+
+#startScreen,
+#restartScreen {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: url('./img/startScreenBackground.png');
+  z-index: 20;
+  background-size: contain;
+  background-repeat: no-repeat;
+  align-items: center;
+  justify-content: center;
+}
+
+#startScreen{
     display: flex;
-    justify-content: center;
-    align-items:center;
-    background-color:black;
-    font-family:sans-serif;
-    font-size:14px;
 }
 
-.game{
-    position:relative;
+#restartScreen{
+    display: none;
 }
 
-.game_canvas{
-    display:block;
+.screenContent{
+    text-align:center;
 }
 
-.score{
-    position:absolute;
-    z-index:10;
+.screenContent h1{
     color:white;
-    left:10px;
-    top:10px;
-    margin:0;
+}
+
+.gameButton{
+    cursor:pointer;
+    position:relative;
+    display:inline-block;
+}
+
+.gameButton span{
+    position:absolute;
+    color:white;
+    top:50%;
+    transform:translate(-50%,-50%);
+    left:50%;
 }

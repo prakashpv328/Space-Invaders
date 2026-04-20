@@ -1,18 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Space Invaders</title>
-</head>
-<body class="page">
-    <div class="game" id="parentDiv">
-        <p class="score score--hiden" id="scoreContainer">
-            <span>Score: </span><span id="scoreEl">0</span>
-        </p>
-        <canvas class="game_canvas" id="gameCanvas"></canvas>
-    </div>
-    <script src="./js/util.js"></script>
-    <script src="script.js"></script>
-</body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Space Invaders</title>
+        <link rel="stylesheet" href="./styles.css" />
+    </head>
+    <body>
+        <div id="parentDiv">
+            <p id="scoreContainer">
+              <span>Score:</span> <span id="scoreEl">0</span>
+            </p>
+
+            <canvas></canvas>
+
+            <div id="startScreen">
+                <div class="screenContent">
+                    <h1>Space Invaders</h1>
+                    <div id="startButton" class="gameButton">
+                        <img src="./img/button.png" alt="Start Button">
+                        <span>Start</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="restartScreen">
+                <div class="screenContent">
+                    <h1>Game Over</h1>
+                    <div id="restartButton" class="gameButton">
+                        <img src="./img/button.png" alt="Restart Button">
+                        <span>Play</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+          <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"
+            integrity="sha512-H6cPm97FAsgIKmlBA4s774vqoN24V5gSQL4yBTDOY2su2DeXZVhQPxFK4P6GPdnZqM9fg1G3cMv5wD7e6cFLZQ=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer">
+          </script>
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"
+            integrity="sha512-6+YN/9o9BWrk6wSfGxQGpt3EUK6XeHi6yeHV+TYD2GR0Sj/cggRpXr1BrAQf0as6XslxomMUxXp2vIl+fv0QRA=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer">
+        </script>
+
+        <script src="./audio.js"></script>
+        <script src="./js/util.js"></script>
+        <script src="./js/classes/Player.js"></script>
+        <script src="./js/classes/Projectile.js"></script>
+        <script src="./js/classes/Particle.js"></script>
+        <script src="./js/classes/InvaderProjectile.js"></script>
+        <script src="./js/classes/Invader.js"></script>
+        <script src="./js/classes/Grid.js"></script>
+        <script src="./js/classes/Bomb.js"></script>
+        <script src="./script.js"></script>
+    </body>
 </html>
