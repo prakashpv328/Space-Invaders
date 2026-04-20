@@ -8,6 +8,7 @@ canvas.height=576;
 let player=null;
 let particles=[];
 let projectiles=[];
+let grids=[];
 let score=0;
 
 let keys={
@@ -16,10 +17,15 @@ let keys={
     space:{pressed:false}
 }
 
+let frames=0;
+let randomInterval=Math.floor(Math.random()*500+500);
+
 let game={
     over:false,
     active:true
 }
+
+let spawnBuffer=500;
 
 let fps=60;
 let fpsInterval=1000/fps;
@@ -29,6 +35,7 @@ function init(){
     player=new Player();
     particles=[];
     projectiles=[];
+    grids=[];
     score=0;
     scoreEl.innerHTML=score;
 
@@ -38,6 +45,9 @@ function init(){
         space:{pressed:false}
     }
 
+    frames=0;
+    randomInterval=Math.floor(Math.random()*500+500);
+    spawnBuffer=500;
 
     game={
         over:false,
@@ -76,8 +86,10 @@ function animate(){
     }
     msPrev=msNow-(elapsed % fpsInterval);
 
+
     c.fillStyle="black";
     c.fillRect(0,0,canvas.width,canvas.height);
+
 
     for(const particle of particles){
         if(particle.position.y-particle.radius >= canvas.height){
@@ -98,6 +110,15 @@ function animate(){
         }
     }
 
+    grids.forEach((grid)=>{
+        grid.update();
+
+        for(let i=grid.invaders.length-1;i>=0;i--){
+            const invader=grid.invaders[i];
+            invader.update({velocity:grid.velocity})
+        }
+    })
+
     if(player){
         if(keys.left.pressed && player.position.x>=0){
             player.velocity.x=-7
@@ -113,6 +134,15 @@ function animate(){
         }
         player.update();
     }
+
+    if(frames%randomInterval===0){
+        spawnBuffer=spawnBuffer<0?100:spawnBuffer;
+        grids.push(new Grid())
+        randomInterval=Math.floor(Math.random()*500+spawnBuffer);
+        frames=0;
+        spawnBuffer-=100
+    }
+    frames++;
 
 }
 
