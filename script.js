@@ -103,12 +103,20 @@ function animate(){
     c.fillRect(0,0,canvas.width,canvas.height);
 
 
-    for(const particle of particles){
+    for(let i=particles.length-1;i>=0;i--){
+        const particle=particles[i];
+
         if(particle.position.y-particle.radius >= canvas.height){
             particle.position.x=Math.random()*canvas.width;
             particle.position.y=-particle.radius;
         } 
-        particle.update();
+
+        if(particle.opacity<=0){
+            particles.splice(i,1)
+        }
+        else{
+            particle.update()
+        }
     }
 
     for(let i=invaderProjectiles.length-1;i>=0;i--){
@@ -141,7 +149,7 @@ function animate(){
         }
     }
 
-    grids.forEach((grid)=>{
+    grids.forEach((grid,gridindex)=>{
         grid.update();
 
         if (frames % 100 === 0 && grid.invaders.length > 0) {
@@ -153,8 +161,40 @@ function animate(){
         for(let i=grid.invaders.length-1;i>=0;i--){
             const invader=grid.invaders[i];
             invader.update({velocity:grid.velocity})
-        }
 
+            for(let j=projectiles.length-1;j>=0;j--){
+                const projectile=projectiles[j]
+
+                if(projectile.position.y+projectile.radius<=invader.position.y+invader.height &&
+                    projectile.position.x+projectile.radius>=invader.position.x &&
+                    projectile.position.x-projectile.radius<=invader.position.x+invader.width &&
+                    projectile.position.y+projectile.radius>=invader.position.y
+                ){
+                    grid.invaders.splice(i,1)
+                    projectiles.splice(j,1)
+
+                    score+=100;
+                    scoreEl.innerHTML=score;
+
+                    createParticles({
+                        object:invader,
+                        fades:true
+                    })
+
+                    if(grid.invaders.length>0){
+                        const firstInvader=grid.invaders[0]
+                        const lastInvader=grid.invaders[grid.invaders.length-1]
+
+                        grid.width=lastInvader.position.x-firstInvader.position.x+lastInvader.width;
+                        grid.position.x=firstInvader.position.x;
+                    }
+                    else{
+                        grids.splice(gridindex,1)
+                    }
+                    break;
+                }
+            }
+        }
     })
 
     if(player){
