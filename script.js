@@ -7,11 +7,12 @@ canvas.height=576;
 
 let player=null;
 let particles=[];
+let projectiles=[];
 let score=0;
 
 let keys={
-    a:{passed:false},
-    d:{pressed:false},
+    left:{passed:false},
+    right:{pressed:false},
     space:{pressed:false}
 }
 
@@ -27,12 +28,13 @@ let msPrev=window.performance.now();
 function init(){
     player=new Player();
     particles=[];
+    projectiles=[];
     score=0;
     scoreEl.innerHTML=score;
 
     keys={
-        a:{passed:false},
-        d:{pressed:false},
+        left:{passed:false},
+        right:{pressed:false},
         space:{pressed:false}
     }
 
@@ -85,12 +87,23 @@ function animate(){
         particle.update();
     }
 
+    for(let i=projectiles.length-1;i>=0;i--){
+        const projectile=projectiles[i];
+
+        if(projectile.position.y+projectile.radius<=0){
+            projectiles.splice(i,1);
+        }
+        else{
+            projectile.update();
+        }
+    }
+
     if(player){
-        if(keys.a.pressed && player.position.x>=0){
+        if(keys.left.pressed && player.position.x>=0){
             player.velocity.x=-7
             player.rotation=-0.15;
         }
-        else if(keys.d.pressed && player.position.x+player.width<=canvas.width){
+        else if(keys.right.pressed && player.position.x+player.width<=canvas.width){
             player.velocity.x=7;
             player.rotation=0.15;
         }
@@ -122,13 +135,30 @@ addEventListener("keydown",({key})=>{
     switch(key){
         case 'a':
         case 'ArrowLeft':
-            keys.a.pressed=true;
+            keys.left.pressed=true;
             break;
+
         case 'd':
         case 'ArrowRight':
-            keys.d.pressed=true;
+            keys.right.pressed=true;
             break;
+
         case ' ':
+
+        if(!keys.space.pressed && player?.image){
+            projectiles.push(
+                new Projectile({
+                    position:{
+                        x:player.position.x+player.width/2,
+                        y:player.position.y
+                    },
+                    velocity:{
+                        x:0,
+                        y:-10
+                    }
+                })
+            )
+        }
             keys.space.pressed=true;
             break;
     }
@@ -140,12 +170,14 @@ addEventListener("keyup",({key})=>{
     switch(key){
         case 'a':
         case 'ArrowLeft':
-            keys.a.pressed=false;
+            keys.left.pressed=false;
             break;
+
         case 'd':
         case 'ArrowRight':
-            keys.d.pressed=false;
+            keys.right.pressed=false;
             break;
+
         case ' ':
             keys.space.pressed=false;
             break;
