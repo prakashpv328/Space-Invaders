@@ -9,6 +9,7 @@ let player=null;
 let particles=[];
 let projectiles=[];
 let grids=[];
+let invaderProjectiles=[];
 let score=0;
 
 let keys={
@@ -35,6 +36,7 @@ function init(){
     player=new Player();
     particles=[];
     projectiles=[];
+    invaderProjectiles=[];
     grids=[];
     score=0;
     scoreEl.innerHTML=score;
@@ -73,6 +75,16 @@ function init(){
     scoreEl.innerHTML=0;
 }
 
+function endgame(){
+    game.over=true;
+    player.opacity=0;
+
+    setTimeout(()=>{
+        game.active=false;
+        document.querySelector("#restartScreen").style.display="flex";
+    },1200)
+}
+
 
 function animate(){
     if(!game.active) return;
@@ -99,6 +111,25 @@ function animate(){
         particle.update();
     }
 
+    for(let i=invaderProjectiles.length-1;i>=0;i--){
+        const invaderProjectile=invaderProjectiles[i]
+
+        if(invaderProjectile.position.y+invaderProjectile.height>=canvas.height){
+            invaderProjectiles.splice(i,1);
+            continue;
+        }
+
+        invaderProjectile.update();
+
+        if(player?.image && rectangularCollision({
+            rectangle1:invaderProjectile,
+            rectangle2:player
+        }) && !game.over){
+            invaderProjectiles.splice(i,1);
+            endgame();
+        }   
+    }
+
     for(let i=projectiles.length-1;i>=0;i--){
         const projectile=projectiles[i];
 
@@ -113,10 +144,17 @@ function animate(){
     grids.forEach((grid)=>{
         grid.update();
 
+        if (frames % 100 === 0 && grid.invaders.length > 0) {
+            const randomInvader =
+                grid.invaders[Math.floor(Math.random() * grid.invaders.length)]
+            randomInvader.shoot(invaderProjectiles)
+        }
+
         for(let i=grid.invaders.length-1;i>=0;i--){
             const invader=grid.invaders[i];
             invader.update({velocity:grid.velocity})
         }
+
     })
 
     if(player){
