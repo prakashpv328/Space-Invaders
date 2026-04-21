@@ -34,8 +34,8 @@ class Bomb{
             this.position.x-this.radius+this.velocity.x<=0){
                 this.velocity.x=-this.velocity.x;
             }
-
-        if(this.position.y+this.radius+this.velocity.y>=canvas.height || 
+                // if(this.position.y+this.radius+this.velocity.y>=canvas.height ||
+        else if(this.position.y+this.radius+this.velocity.y>=canvas.height || 
             this.position.y-this.radius+this.velocity.y<=0){
             this.velocity.y=-this.velocity.y;
         }
@@ -56,5 +56,27 @@ class Bomb{
             opacity:0,
             duration:0.15
         })
+    }
+}
+
+class PowerUp{
+    constructor({position,velocity}){
+        this.position=position;
+        this.velocity=velocity;
+        this.radius=15;
+    }
+
+    draw(){
+        c.beginPath();
+        c.arc(this.position.x,this.position.y,this.radius,0,Math.PI*2);
+        c.fillStyle='yellow'
+        c.fill()
+        c.closePath();
+    }
+
+    update(){
+        this.draw();
+        this.position.x+=this.velocity.x;
+        this.position.y+=this.velocity.y;
     }
 }

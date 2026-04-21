@@ -5,27 +5,27 @@ class Player{
         this.opacity=1;
         this.powerUp=null;
 
-        this.image=null;
-        this.width=0;
-        this.height=0;
-        this.position={
-            x:0,y:0
-        }
-
-        this.particles=[]
-        this.frames=0;
+        // this.image=null;
+        // this.width=0;
+        // this.height=0;
+        // this.position={
+        //     x:0,y:0
+        // }
 
         const image=new Image();
         image.src="./img/spaceship.png";
         image.onload=()=>{
+            const scale=0.15;
             this.image=image;
-            this.width=image.width*0.15;
-            this.height=image.height*0.15;
+            this.width=image.width*scale;
+            this.height=image.height*scale;
             this.position={
                 x:canvas.width/2-this.width/2,
                 y:canvas.height-this.height-20
             }
         }
+        this.particles=[]
+        this.frames=0;
     }
 
     draw() {
@@ -54,10 +54,27 @@ class Player{
         if(!this.image) return
         this.draw();
         this.position.x+=this.velocity.x;
+
+        if(this.opacity!==1) return;
+
+        this.frames++
+
+        if(this.frames%2===0){
+            this.particles.push(
+                new Particle({
+                    position:{
+                        x:this.position.x+this.width/2,
+                        y:this.position.y+this.height
+                    },
+                    velocity:{
+                        x:(Math.random()-0.5)*1.5,
+                        y:1.5+Math.random()*1.5
+                    },
+                    radius:Math.random()*2,
+                    color:'white',
+                    fades:true
+                })
+            )
+        }
     }
-
-    
-
-
-
 }

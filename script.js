@@ -11,6 +11,7 @@ let projectiles=[];
 let grids=[];
 let invaderProjectiles=[];
 let bombs=[];
+let powerUps=[];
 let score=0;
 
 let keys={
@@ -40,6 +41,7 @@ function init(){
     invaderProjectiles=[];
     grids=[];
     bombs=[];
+    powerUps=[];
     score=0;
     scoreEl.innerHTML=score;
 
@@ -103,6 +105,31 @@ function animate(){
     c.fillStyle="black";
     c.fillRect(0,0,canvas.width,canvas.height);
 
+    if(frames%500===0){
+        powerUps.push(
+            new PowerUp({
+                position:{
+                    x:0,
+                    y:Math.random()*300+15
+                },
+                velocity:{
+                    x:5,
+                    y:0
+                }
+            })
+        )
+    }
+
+    for(let i=powerUps.length-1;i>=0;i--){
+        const powerUp=powerUps[i];
+        if(powerUp.position.x-powerUp.radius>=canvas.width){
+            powerUps.splice(i,1);
+        }
+        else{
+            powerUp.update()
+        }
+    }
+
     if(frames%200===0 && bombs.length<3){
         bombs.push(
             new Bomb({
@@ -141,6 +168,17 @@ function animate(){
         }
     }
 
+    if(player?.particles){
+        for(let i=player.particles.length-1;i>=0;i--){
+            const particle=player.particles[i]
+            particle.update();
+
+            if(particle.opacity<=0){
+                player.particles.splice(i,1);
+            }
+        }
+    }
+
     for(let i=invaderProjectiles.length-1;i>=0;i--){
         const invaderProjectile=invaderProjectiles[i]
 
@@ -172,15 +210,34 @@ function animate(){
                 ) < projectile.radius+bomb.radius && !bomb.active
             ){
                 projectiles.splice(i,1);
-                score+=50;
-                scoreEl.innerHTML=score;
+                // score+=50;
+                // scoreEl.innerHTML=score;
 
-                createScoreLabel({
-                    object:bomb,
-                    score:50
-                })
+                // createScoreLabel({
+                //     object:bomb,
+                //     score:50
+                // })
 
                 bomb.explode()
+                break;
+            }
+        }
+
+        for(let j=powerUps.length-1;j>=0;j--){
+            const powerUp=powerUps[j]
+            if(
+                Math.hypot(
+                    projectile.position.x-powerUp.position.x,
+                    projectile.position.y-powerUp.position.y
+                ) < projectile.radius+powerUp.radius
+            ){
+                projectiles.splice(i,1);
+                powerUps.splice(j,1);
+                
+                player.powerUp='MachineGun'
+                setTimeout(()=>{
+                    if(player) player.powerUp=null;
+                }, 5000)
                 break;
             }
         }
@@ -311,6 +368,26 @@ function animate(){
         frames=0;
         spawnBuffer-=100
     }
+
+    if(
+        keys.space.pressed && 
+        player?.powerUp==='MachineGun' &&
+        frames % 2 === 0 &&
+        !game.over && 
+        player?.image
+    ){
+        projectiles.push(
+            new Projectile({
+                position:{
+                    x:player.position.x+player.width/2,
+                    y:player.position.y
+                },
+                velocity:{x:0,y:-10},
+                color:'yellow'
+            })
+        )
+    }
+
     frames++;
 
 }
@@ -343,29 +420,26 @@ addEventListener("keydown",({key})=>{
             break;
 
         case ' ':
-
-        if(!keys.space.pressed && player?.image){
-            projectiles.push(
-                new Projectile({
-                    position:{
-                        x:player.position.x+player.width/2,
-                        y:player.position.y
-                    },
-                    velocity:{
-                        x:0,
-                        y:-10
-                    }
-                })
-            )
-        }
             keys.space.pressed=true;
-            break;
+
+            if(player?.powerUp === 'MachineGun') return;
+
+            if(player?.image){
+                projectiles.push(
+                    new Projectile({
+                        position:{
+                            x:player.position.x+player.width/2,
+                            y:player.position.y
+                        },
+                        velocity:{x:0,y:-10}
+                    })
+                )
+            }
+        break;
     }
 })
 
 addEventListener("keyup",({key})=>{
-    if(game.over) return;
-
     switch(key){
         case 'a':
         case 'ArrowLeft':
