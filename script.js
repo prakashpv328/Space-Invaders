@@ -14,7 +14,7 @@ let bombs=[];
 let score=0;
 
 let keys={
-    left:{passed:false},
+    left:{pressed:false},
     right:{pressed:false},
     space:{pressed:false}
 }
@@ -44,7 +44,7 @@ function init(){
     scoreEl.innerHTML=score;
 
     keys={
-        left:{passed:false},
+        left:{pressed:false},
         right:{pressed:false},
         space:{pressed:false}
     }
@@ -74,10 +74,9 @@ function init(){
             })
         )
     }
-    scoreEl.innerHTML=0;
 }
 
-function endgame(){
+function endGame(){
     game.over=true;
     player.opacity=0;
 
@@ -157,7 +156,7 @@ function animate(){
             rectangle2:player
         }) && !game.over){
             invaderProjectiles.splice(i,1);
-            endgame();
+            endGame();
         }   
     }
 
@@ -173,6 +172,14 @@ function animate(){
                 ) < projectile.radius+bomb.radius && !bomb.active
             ){
                 projectiles.splice(i,1);
+                score+=50;
+                scoreEl.innerHTML=score;
+
+                createScoreLabel({
+                    object:bomb,
+                    score:50
+                })
+
                 bomb.explode()
                 break;
             }
@@ -201,10 +208,50 @@ function animate(){
             const invader=grid.invaders[i];
             invader.update({velocity:grid.velocity})
 
+            for(let j=bombs.length-1;j>=0;j--){
+                const bomb=bombs[j]
+                const invaderRadius=15
+
+                if(
+                    Math.hypot(
+                        invader.position.x-bomb.position.x,
+                        invader.position.y-bomb.position.y
+                    ) < invaderRadius + bomb.radius && bomb.active
+                ){
+                    grid.invaders.splice(i,1);
+                    score+=50
+                    scoreEl.innerHTML=score;
+
+                    createScoreLabel({
+                        object:invader,
+                        score:50
+                    })
+
+                    createParticles({
+                        object:invader,
+                        fades:true
+                    })
+
+                    if(grid.invaders.length>0){
+                        const firstInvader=grid.invaders[0]
+                        const lastInvader=grid.invaders[grid.invaders.length-1]
+
+                        grid.width=lastInvader.position.x-firstInvader.position.x+lastInvader.width;
+                        grid.position.x=firstInvader.position.x;
+                    }
+                    else{
+                        grids.splice(gridindex,1)
+                    }
+                    break;
+                }
+            }
+
+            if(!grid.invaders[i]) continue;
+
             for(let j=projectiles.length-1;j>=0;j--){
                 const projectile=projectiles[j]
 
-                if(projectile.position.y+projectile.radius<=invader.position.y+invader.height &&
+                if(projectile.position.y-projectile.radius<=invader.position.y+invader.height &&
                     projectile.position.x+projectile.radius>=invader.position.x &&
                     projectile.position.x-projectile.radius<=invader.position.x+invader.width &&
                     projectile.position.y+projectile.radius>=invader.position.y
@@ -216,7 +263,8 @@ function animate(){
                     scoreEl.innerHTML=score;
 
                     createScoreLabel({
-                        object:invader
+                        object:invader,
+                        score:100
                     })
 
                     createParticles({

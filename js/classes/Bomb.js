@@ -30,13 +30,13 @@ class Bomb{
         this.position.x+=this.velocity.x;
         this.position.y+=this.velocity.y;
 
-        if(this.position.x+this.radius+this.velocity.x>canvas.width || 
+        if(this.position.x+this.radius+this.velocity.x>=canvas.width || 
             this.position.x-this.radius+this.velocity.x<=0){
                 this.velocity.x=-this.velocity.x;
             }
-        else if(this.position.y+this.radius+this.velocity.y>canvas.height || 
-            this.position.y-this.radius+this.velocity.y<=0){
 
+        if(this.position.y+this.radius+this.velocity.y>=canvas.height || 
+            this.position.y-this.radius+this.velocity.y<=0){
             this.velocity.y=-this.velocity.y;
         }
     }
