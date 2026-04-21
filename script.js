@@ -10,6 +10,7 @@ let particles=[];
 let projectiles=[];
 let grids=[];
 let invaderProjectiles=[];
+let bombs=[];
 let score=0;
 
 let keys={
@@ -38,6 +39,7 @@ function init(){
     projectiles=[];
     invaderProjectiles=[];
     grids=[];
+    bombs=[];
     score=0;
     scoreEl.innerHTML=score;
 
@@ -102,6 +104,27 @@ function animate(){
     c.fillStyle="black";
     c.fillRect(0,0,canvas.width,canvas.height);
 
+    if(frames%200===0 && bombs.length<3){
+        bombs.push(
+            new Bomb({
+                position:{
+                    x:randomBetween(Bomb.radius,canvas.width-Bomb.radius),
+                    y:randomBetween(Bomb.radius,canvas.height-Bomb.radius)
+                },
+                velocity:{
+                    x:(Math.random()-0.5)*6,
+                    y:(Math.random()-0.5)*6
+                }
+            })
+        )
+    }
+
+    for(let i=bombs.length-1;i>=0;i--){
+        const bomb=bombs[i]
+        if(bomb.opacity<=0) bombs.splice(i,1)
+        else bomb.update();
+    }
+
 
     for(let i=particles.length-1;i>=0;i--){
         const particle=particles[i];
@@ -141,6 +164,22 @@ function animate(){
     for(let i=projectiles.length-1;i>=0;i--){
         const projectile=projectiles[i];
 
+        for(let j=bombs.length-1;j>=0;j--){
+            const bomb=bombs[j]
+            if(
+                Math.hypot(
+                    projectile.position.x-bomb.position.x,
+                    projectile.position.y-bomb.position.y
+                ) < projectile.radius+bomb.radius && !bomb.active
+            ){
+                projectiles.splice(i,1);
+                bomb.explode()
+                break;
+            }
+        }
+
+        if(!projectiles[i]) continue;
+
         if(projectile.position.y+projectile.radius<=0){
             projectiles.splice(i,1);
         }
@@ -175,6 +214,10 @@ function animate(){
 
                     score+=100;
                     scoreEl.innerHTML=score;
+
+                    createScoreLabel({
+                        object:invader
+                    })
 
                     createParticles({
                         object:invader,
