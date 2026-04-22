@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Space Invaders</title>
         <link rel="stylesheet" href="./styles.css" />
-        <link rel="shortcut icon" type="image/x-icon" href="./img/spaceship.png" />
+        <link rel="shortcut icon" type="image/x-icon" href="./img/spaceships/spaceship1.png" />
     </head>
     <body>
         <div id="parentDiv">
@@ -17,12 +17,12 @@
 
             <div id="startScreen">
                 <button id="settingsButton" aria-label="Open Settings">
-                    <img src="./img/settings.png" alt="Settings">
+                    <img src="./img/components/settings.png" alt="Settings">
                 </button>
                 <div class="screenContent">
                     <h1>Space Invaders</h1>
                     <div id="startButton" class="gameButton">
-                        <img src="./img/button.png" alt="Start Button">
+                        <img src="./img/components/button.png" alt="Start Button">
                         <span>Start</span>
                     </div>
 
@@ -54,24 +54,24 @@
 
                 <div id="settingsPopup" class="settingsPopup hidden" role="dialog" aria-modal="true" aria-label="Settings">
                     <div class="settingsPanel">
-                        <img class="settingsBg" src="./img/startScreenBackground.png" alt="Settings Background" />
+                        <img class="settingsBg" src="./img/components/startScreenBackground.png" alt="Settings Background" />
                         
                         <div class="settingsContent">
                             <h2>Settings</h2>
                             <p>Select Spaceship</p>
                             
                             <div class="shipOptions">
-                                <button class="shipOption selected" data-ship="./img/spaceship.png">
-                                    <img src="./img/spaceship.png" alt="Ship 1" />
+                                <button class="shipOption selected" data-ship="./img/spaceships/spaceship1.png">
+                                    <img src="./img/spaceships/spaceship1.png" alt="Ship 1" />
                                 </button>
-                                <button class="shipOption" data-ship="./img/spaceship2.png">
-                                    <img src="./img/spaceship2.png" alt="Ship 2" />
+                                <button class="shipOption" data-ship="./img/spaceships/spaceship2.png">
+                                    <img src="./img/spaceships/spaceship2.png" alt="Ship 2" />
                                 </button>
-                                <button class="shipOption" data-ship="./img/spaceship3.png">
-                                    <img src="./img/spaceship3.png" alt="Ship 3" />
+                                <button class="shipOption" data-ship="./img/spaceships/spaceship3.png">
+                                    <img src="./img/spaceships/spaceship3.png" alt="Ship 3" />
                                 </button>
-                                <button class="shipOption" data-ship="./img/spaceship4.png">
-                                    <img src="./img/spaceship4.png" alt="Ship 4" />
+                                <button class="shipOption" data-ship="./img/spaceships/spaceship4.png">
+                                    <img src="./img/spaceships/spaceship4.png" alt="Ship 4" />
                                 </button>
                             </div>
 
@@ -98,7 +98,7 @@
                 <div class="screenContent">
                     <h1>Game Over</h1>
                     <div id="restartButton" class="gameButton">
-                        <img src="./img/button.png" alt="Restart Button">
+                        <img src="./img/components/button.png" alt="Restart Button">
                         <span>Play</span>
                     </div>
                 </div>

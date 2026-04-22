@@ -5,20 +5,13 @@ class Player{
         this.opacity=1;
         this.powerUp=null;
 
-        // this.image=null;
-        // this.width=0;
-        // this.height=0;
-        // this.position={
-        //     x:0,y:0
-        // }
-
         const image=new Image();
         
-        const selectedShip=localStorage.getItem('selectedShip') || './img/spaceship.png';
+        const selectedShip=localStorage.getItem('selectedShip') || './img/spaceships/spaceship1.png';
         image.src=selectedShip;
 
         image.onerror=()=>{
-            image.src='./img/spaceship.png';
+            image.src='./img/spaceships/spaceship1.png';
         }
 
         image.onload=()=>{

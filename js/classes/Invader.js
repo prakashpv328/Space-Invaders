@@ -15,8 +15,8 @@ class Invader {
             down:new Image()
         }
       
-        this.frames.up.src='./img/invaderUp.png'
-        this.frames.down.src='./img/invaderDown.png'
+        this.frames.up.src='./img/invaders/invaderUp2.png'
+        this.frames.down.src='./img/invaders/invaderDown2.png'
       
         this.currentFrame='up'
         this.lastSwapTime=performance.now()

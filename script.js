@@ -57,7 +57,7 @@ let lastShotTime = {
   yellow: 0
 }
 
-let tempSelectedShip = localStorage.getItem('selectedShip') || './img/spaceship.png';
+let tempSelectedShip = localStorage.getItem('selectedShip') || './img/spaceships/spaceship1.png';
 
 const storedSoundEnabled=localStorage.getItem('soundEnabled');
 let tempSoundEnabled=storedSoundEnabled===null?true:storedSoundEnabled==='true';
@@ -70,7 +70,7 @@ function markSelected(shipPath) {
 
 settingsButton?.addEventListener('click', (e) => {
   e.stopPropagation();
-  tempSelectedShip = localStorage.getItem('selectedShip') || './img/spaceship.png';
+  tempSelectedShip = localStorage.getItem('selectedShip') || './img/spaceships/spaceship1.png';
   markSelected(tempSelectedShip);
   tempSoundEnabled = storedSoundEnabled === null ? true : storedSoundEnabled === 'true';
   markSoundSelected(tempSoundEnabled);

@@ -28,7 +28,7 @@ body{
 #restartScreen{
   position: absolute;
   inset: 0;
-  background: url("./img/startScreenBackground.png");
+  background: url("./img/components/startScreenBackground.png");
   background-size: contain;
   background-repeat: no-repeat;
   align-items: center;
