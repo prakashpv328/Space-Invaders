@@ -8,6 +8,8 @@ const settingsSave = document.querySelector('#settingsSave');
 const settingsCancel = document.querySelector('#settingsCancel');
 const shipOptions = document.querySelectorAll('.shipOption');
 
+const soundOptions=document.querySelectorAll('.soundOption');
+
 canvas.width=1250;
 canvas.height=700;
 
@@ -41,13 +43,13 @@ let fpsInterval=1000/fps;
 let msPrev=window.performance.now();
 
 const BULLET_SPEED={
-    red:-8,
+    red:-8.5,
     yellow:-12
 }
 
 const FIRE_RATE={
-    red:75,
-    yellow:50
+    red:65,
+    yellow:40
 }
 
 let lastShotTime = {
@@ -56,6 +58,9 @@ let lastShotTime = {
 }
 
 let tempSelectedShip = localStorage.getItem('selectedShip') || './img/spaceship.png';
+
+const storedSoundEnabled=localStorage.getItem('soundEnabled');
+let tempSoundEnabled=storedSoundEnabled===null?true:storedSoundEnabled==='true';
 
 function markSelected(shipPath) {
   shipOptions.forEach(btn => {
@@ -67,6 +72,8 @@ settingsButton?.addEventListener('click', (e) => {
   e.stopPropagation();
   tempSelectedShip = localStorage.getItem('selectedShip') || './img/spaceship.png';
   markSelected(tempSelectedShip);
+  tempSoundEnabled = storedSoundEnabled === null ? true : storedSoundEnabled === 'true';
+  markSoundSelected(tempSoundEnabled);
   settingsPopup?.classList.remove('hidden');
 });
 
@@ -77,18 +84,40 @@ shipOptions.forEach(btn => {
   });
 });
 
+soundOptions.forEach(btn => {
+  btn.addEventListener('click', () => {
+    tempSoundEnabled = btn.dataset.sound === 'on';
+    markSoundSelected(tempSoundEnabled);
+  });
+});
+
 settingsCancel?.addEventListener('click', () => {
   settingsPopup?.classList.add('hidden');
 });
 
 settingsSave?.addEventListener('click', () => {
   localStorage.setItem('selectedShip', tempSelectedShip);
+  localStorage.setItem('soundEnabled', tempSoundEnabled);
+  applySoundSetting(tempSoundEnabled);
   settingsPopup?.classList.add('hidden');
 });
 
 settingsPopup?.addEventListener('click', (e) => {
   if (e.target === settingsPopup) settingsPopup.classList.add('hidden');
 });
+
+function markSoundSelected(isEnabled){
+    soundOptions.forEach(btn=>{
+        const isOnButton=btn.dataset.sound==='on';
+        btn.classList.toggle('selected',isOnButton===isEnabled)
+    });
+}
+
+function applySoundSetting(isEnabled){
+    Howler.mute(!isEnabled);
+}
+
+applySoundSetting(tempSoundEnabled);
 
 function updateGridBounds(grid,gridindex){
     if(grid.invaders.length===0){

@@ -269,3 +269,43 @@ body{
 .hidden{
   display: none !important;
 }
+
+.soundSettings{
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.soundSettings p{
+  margin: 0;
+  font-size: 16px;
+  color: #fff;
+}
+
+.soundOptions{
+  display: flex;
+  gap: 10px;
+}
+
+.soundOption{
+  min-width: 88px;
+  height: 36px;
+  border: 2px solid #2f4250;
+  border-radius: 8px;
+  background: rgba(10, 25, 35, 0.7);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.soundOption.selected{
+  border-color: #00e5cc;
+  box-shadow: 0 0 0 2px rgba(0, 229, 204, 0.25);
+}
+
+.settingsBtn.primary{
+  background: #00b8a7;
+  color: #07131b;
+}
