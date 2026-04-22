@@ -34,6 +34,23 @@ let fps=60;
 let fpsInterval=1000/fps;
 let msPrev=window.performance.now();
 
+function updateGridBounds(grid,gridindex){
+    if(grid.invaders.length===0){
+        grids.splice(gridindex,1);
+        return;
+    }
+
+    const positionedInvaders=grid.invaders.filter((invader)=>invader?.position)
+
+    if(positionedInvaders.length===0) return;
+
+    const firstInvader=positionedInvaders[0]
+    const lastInvader=positionedInvaders[positionedInvaders.length-1]
+
+    grid.width=lastInvader.position.x-firstInvader.position.x+lastInvader.width;
+    grid.position.x=firstInvader.position.x;
+}
+
 function init(){
     player=new Player();
     particles=[];
@@ -84,10 +101,8 @@ function endGame(){
     console.log("lose");
     audio.gameOver.play();
 
-    setTimeout(()=>{
-        player.opacity=0;
-        game.over=true;
-    },0)
+    player.opacity=0;
+    game.over=true;
 
     setTimeout(()=>{
         game.active=false;
@@ -175,9 +190,7 @@ function animate(){
         } 
 
         if(particle.opacity<=0){
-            setTimeout(()=>{
-                particles.splice(i,1)
-            },0)
+            particles.splice(i,1)
         }
         else{
             particle.update()
@@ -199,9 +212,7 @@ function animate(){
         const invaderProjectile=invaderProjectiles[i]
 
         if(invaderProjectile.position.y+invaderProjectile.height>=canvas.height){
-            setTimeout(()=>{
-                invaderProjectiles.splice(i,1);
-            },0)
+            invaderProjectiles.splice(i,1);
         }
         else{
             invaderProjectile.update();
@@ -218,6 +229,8 @@ function animate(){
 
     for(let i=projectiles.length-1;i>=0;i--){
         const projectile=projectiles[i];
+
+        if(!projectile || !projectile.position) continue;
 
         for(let j=bombs.length-1;j>=0;j--){
             const bomb=bombs[j]
@@ -237,10 +250,10 @@ function animate(){
                 // })
 
                 bomb.explode()
+                break;
             }
         }
 
-        // if(!projectiles[i]) continue;
 
         for(let j=powerUps.length-1;j>=0;j--){
             const powerUp=powerUps[j]
@@ -259,6 +272,8 @@ function animate(){
                 setTimeout(()=>{
                     if(player) player.powerUp=null;
                 }, 5000)
+
+                break;
             }
         }
 
@@ -283,6 +298,8 @@ function animate(){
 
         for(let i=grid.invaders.length-1;i>=0;i--){
             const invader=grid.invaders[i];
+            if (!invader || !invader.position) continue;
+
             invader.update({velocity:grid.velocity})
 
             for(let j=bombs.length-1;j>=0;j--){
@@ -295,10 +312,9 @@ function animate(){
                         invader.position.y-bomb.position.y
                     ) < invaderRadius + bomb.radius && bomb.active
                 ){
+                    grid.invaders.splice(i,1);
                     score+=50
                     scoreEl.innerHTML=score;
-
-                    grid.invaders.splice(i,1);
 
                     createScoreLabel({
                         object:invader,
@@ -309,6 +325,9 @@ function animate(){
                         object:invader,
                         fades:true
                     })
+
+                    updateGridBounds(grid,gridindex)
+                    break;
                 }
             }
 
@@ -316,50 +335,33 @@ function animate(){
 
             for(let j=projectiles.length-1;j>=0;j--){
                 const projectile=projectiles[j]
+                if(!projectile || !projectile.position) continue;
 
                 if(projectile.position.y-projectile.radius<=invader.position.y+invader.height &&
                     projectile.position.x+projectile.radius>=invader.position.x &&
                     projectile.position.x-projectile.radius<=invader.position.x+invader.width &&
                     projectile.position.y+projectile.radius>=invader.position.y
-                )
-                {
-                    setTimeout(()=>{
-                        const invaderFound=grid.invaders.find((invader2)=>invader2===invader)
-                        const projectileFound=projectiles.find(
-                            (projectile2)=>projectile2===projectile
-                        )
+                ){
+                    grid.invaders.splice(i,1)
+                    projectiles.splice(j,1)
 
-                        if(invaderFound && projectileFound){
+                    score+=100;
+                    scoreEl.innerHTML=score;
 
-                            score+=100;
-                            scoreEl.innerHTML=score;
-        
-                            createScoreLabel({
-                                object:invader,
-                                score:100
-                            })
-        
-                            createParticles({
-                                object:invader,
-                                fades:true
-                            })
-        
-                            audio.explode.play();
-                            grid.invaders.splice(i,1);
-                            projectiles.splice(j,1)
-        
-                            if(grid.invaders.length>0){
-                                const firstInvader=grid.invaders[0]
-                                const lastInvader=grid.invaders[grid.invaders.length-1]
-        
-                                grid.width=lastInvader.position.x-firstInvader.position.x+lastInvader.width;
-                                grid.position.x=firstInvader.position.x;
-                            }
-                            else{
-                                grids.splice(gridindex,1)
-                            }
-                        }
-                    },0)
+                    createScoreLabel({
+                        object:invader,
+                        score:100
+                    })
+
+                    createParticles({
+                        object:invader,
+                        fades:true
+                    })
+
+                    audio.explode.play();
+
+                    updateGridBounds(grid,gridindex)
+                    break;
                 }
             }
 
@@ -371,11 +373,11 @@ function animate(){
             }) && !game.over)
             {
                 endGame();
-            }  
+            }
         }
     })
 
-    if(player?.image){
+    if(player && player.image && player.position){
         if(keys.left.pressed && player.position.x>=0){
             player.velocity.x=-7
             player.rotation=-0.15;
