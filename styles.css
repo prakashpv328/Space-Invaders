@@ -3,21 +3,21 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgb(0, 0, 0);
+  background-color: #000;
   font-family: sans-serif;
   font-size: 14px;
-  height:100vh;
+  height: 100vh;
 }
 
 #parentDiv {
   position: relative;
-  user-select:none;
+  user-select: none;
 }
 
 #scoreContainer {
   position: absolute;
   z-index: 10;
-  color: white;
+  color: #fff;
   left: 10px;
   top: 10px;
   margin: 0;
@@ -27,93 +27,92 @@ body {
 #startScreen,
 #restartScreen {
   position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background: url('./img/startScreenBackground.png');
-  z-index: 20;
+  inset: 0;
+  background: url("./img/startScreenBackground.png");
   background-size: contain;
   background-repeat: no-repeat;
   align-items: center;
   justify-content: center;
+  z-index: 20;
 }
 
-#startScreen{
+#startScreen {
   display: flex;
+  overflow: hidden;
+  position: absolute;
 }
 
-#restartScreen{
+#restartScreen {
   display: none;
 }
 
-.screenContent{
-  text-align:center;
+.screenContent {
+  text-align: center;
 }
 
-.screenContent h1{
-  color:white;
+.screenContent h1 {
+  color: #fff;
 }
 
-.gameButton{
-  cursor:pointer;
-  position:relative;
-  display:inline-block;
+.gameButton {
+  cursor: pointer;
+  position: relative;
+  display: inline-block;
 }
 
-.gameButton span{
-  position:absolute;
-  color:white;
-  top:50%;
-  transform:translate(-50%,-50%);
-  left:50%;
-}
-
-#startScreen .screenContent{
-  position:relative;
-  width:100%;
-  max-width:760px;
-  min-height:430px;
-  margin:0 auto;
-  text-align:center;
-}
-
-.bottomControl{
+.gameButton span {
   position: absolute;
-  left:0;
-  right:0;
-  bottom:18px;
-  height:90px;
-  pointer-events:none;
+  color: #fff;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#startScreen .screenContent {
+  position: relative;
+  width: 100%;
+  max-width: 760px;
+  min-height: 430px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.bottomControls {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 18px;
+  height: 90px;
+  pointer-events: none;
 }
 
 .cornerControl,
-.centerControl{
-  position:absolute;
-  text-align:center;
-  color:white;
+.centerControl {
+  position: absolute;
+  text-align: center;
+  color: #fff;
 }
 
-.leftCorner{
-  left:18px;
-  bottom:0;
+.leftCorner {
+  left: 18px;
+  bottom: 0;
 }
 
-.rightCorner{
-  right:18px;
-  bottom:0;
+.rightCorner {
+  right: 18px;
+  bottom: 0;
 }
 
-.centerControl{
-  left:50%;
-  transform:translateX(-50%);
-  bottom:0;
+.centerControl {
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0;
 }
 
-.keyRow{
-  display:flex;
-  gap:8px;
-  justify-content:center;
+.keyRow {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
 }
 
 .pixelKey {
@@ -144,5 +143,57 @@ body {
 .centerControl p {
   margin: 6px 0 0;
   font-size: 18px;
-  color: white;
+  color: #fff;
+}
+
+#settingsButton {
+  position: absolute;
+  top: 50px;
+  right: 50px;
+  z-index: 70;
+  width: 50px;
+  height: 50px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+
+#settingsButton img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.45));
+  transition: transform 0.15s ease;
+}
+
+#settingsButton:hover img {
+  transform: scale(1.07);
+}
+
+
+.settingsPopup {
+  position: absolute;
+  inset: 0;
+  z-index: 65;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.35);  /* dark overlay */
+  backdrop-filter: blur(8px);       /* blur background */
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.settingsPopup img {
+  width: min(500px, calc(100% - 64px));
+  height: auto;
+  display: block;
+  border-radius: 12px;
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* hide/show */
+.hidden {
+  display: none !important;
 }

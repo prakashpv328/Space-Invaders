@@ -1,6 +1,8 @@
 const scoreEl=document.querySelector('#scoreEl');
 const canvas=document.querySelector("canvas");
 const c=canvas.getContext("2d");
+const settingsButton=document.querySelector('#settingsButton');
+const settingsPopup=document.querySelector('#settingsPopup');
 
 canvas.width=1250;
 canvas.height=700;
@@ -33,6 +35,21 @@ let spawnBuffer=500;
 let fps=60;
 let fpsInterval=1000/fps;
 let msPrev=window.performance.now();
+
+const BULLET_SPEED={
+    red:-8,
+    yellow:-12
+}
+
+const FIRE_RATE={
+    red:75,
+    yellow:50
+}
+
+let lastShotTime = {
+  red: 0,
+  yellow: 0
+}
 
 function updateGridBounds(grid,gridindex){
     if(grid.invaders.length===0){
@@ -401,14 +418,17 @@ function animate(){
         spawnBuffer-=100
     }
 
+    const now = performance.now()
+
     if(
         keys.space.pressed && 
         player?.powerUp==='MachineGun' &&
-        frames % 2 === 0 &&
         !game.over && 
-        player?.image
+        player?.image &&
+        now - lastShotTime.yellow >= FIRE_RATE.yellow
     ){
-        if(frames%6===0) audio.shoot.play();
+        lastShotTime.yellow = now
+        audio.shoot.play();
 
         projectiles.push(
             new Projectile({
@@ -416,7 +436,7 @@ function animate(){
                     x:player.position.x+player.width/2,
                     y:player.position.y
                 },
-                velocity:{x:0,y:-10},
+                velocity:{x:0,y:BULLET_SPEED.yellow},
                 color:'yellow'
             })
         )
@@ -434,6 +454,18 @@ document.querySelector('#startButton').addEventListener("click",()=>{
     init();
     animate();
 })
+
+settingsButton?.addEventListener('click', (e) => {
+  e.stopPropagation();
+  settingsPopup?.classList.toggle('hidden');
+});
+
+document.addEventListener('click', (e) => {
+  if (!settingsPopup || settingsPopup.classList.contains('hidden')) return;
+  if (!settingsPopup.contains(e.target) && !settingsButton.contains(e.target)) {
+    settingsPopup.classList.add('hidden');
+  }
+});
 
 document.querySelector("#restartButton").addEventListener("click",()=>{
     audio.select.play();
@@ -460,9 +492,14 @@ addEventListener("keydown",({key})=>{
         case ' ':
             keys.space.pressed=true;
 
+            const now = performance.now()
+
             if(player?.powerUp === 'MachineGun') return;
 
-            if(player?.image){
+            if(player?.image && now - lastShotTime.red >= FIRE_RATE.red)
+            {
+                lastShotTime.red = now
+
                 audio.shoot.play();
                 projectiles.push(
                     new Projectile({
@@ -470,7 +507,8 @@ addEventListener("keydown",({key})=>{
                             x:player.position.x+player.width/2,
                             y:player.position.y
                         },
-                        velocity:{x:0,y:-10}
+                        velocity:{x:0,y:BULLET_SPEED.red},
+                        color:'red'
                     })
                 )
             }

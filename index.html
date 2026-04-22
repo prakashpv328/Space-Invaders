@@ -16,6 +16,9 @@
             <canvas></canvas>
 
             <div id="startScreen">
+                <button id="settingsButton" aria-label="Open Settings">
+                    <img src="./img/settings.png" alt="Settings">
+                </button>
                 <div class="screenContent">
                     <h1>Space Invaders</h1>
                     <div id="startButton" class="gameButton">
@@ -47,6 +50,13 @@
                     </div>
                     
                 </div>
+
+
+                <div id="settingsPopup" class="settingsPopup hidden" role="dialog" aria-modal="true" aria-label="Settings">
+                    <img src="./img/startScreenBackground.png" alt="Settings Popup" />
+                </div>
+
+
             </div>
 
             <div id="restartScreen">
