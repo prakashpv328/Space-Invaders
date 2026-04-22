@@ -422,6 +422,7 @@ function animate(){
     frames++;
 }
 
+
 document.querySelector('#startButton').addEventListener("click",()=>{
     audio.backgroundMusic.play();
     audio.start.play();

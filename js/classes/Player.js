@@ -13,7 +13,7 @@ class Player{
         // }
 
         const image=new Image();
-        image.src="./img/spaceship.png";
+        image.src="./img/spaceship3.png";
         image.onload=()=>{
             const scale=0.15;
             this.image=image;
@@ -35,15 +35,15 @@ class Player{
         c.globalAlpha=this.opacity;
 
         c.translate(
-            this.position.x+this.width/2,
-            this.position.y+this.height/2
+            player.position.x+player.width/2,
+            player.position.y+player.height/2
         )
 
         c.rotate(this.rotation)
 
         c.translate(
-            -this.position.x-this.width/2,
-            -this.position.y-this.height/2
+            -player.position.x-player.width/2,
+            -player.position.y-player.height/2
         )
 
             c.drawImage(this.image, this.position.x, this.position.y, this.width, this.height)
