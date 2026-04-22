@@ -14,8 +14,13 @@
 
             const spaceX=50;
 
-            const columns=Math.floor(Math.random()*10+5);
-            const rows=Math.floor(Math.random()*5+2);
+            const minRow=2;
+            const maxRow=6;
+            const minCol=5;
+            const maxCol=10;
+
+            const columns=Math.floor(Math.random() * (maxCol-minCol+1)+minCol);
+            const rows=Math.floor(Math.random() * (maxRow-minRow+1)+minRow);
 
             this.width=columns*spaceX;
 

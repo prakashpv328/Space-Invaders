@@ -88,7 +88,7 @@ function init(){
                     x:0,
                     y:0.3
                 },
-                radius:Math.random()*2,
+                radius:Math.random()*3,
                 color:'white'
             })
         )
