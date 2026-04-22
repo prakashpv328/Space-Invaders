@@ -3,9 +3,10 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: black;
+  background-color: rgb(0, 0, 0);
   font-family: sans-serif;
   font-size: 14px;
+  height:100vh;
 }
 
 #parentDiv {
