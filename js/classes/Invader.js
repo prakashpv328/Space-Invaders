@@ -46,6 +46,7 @@ class Invader {
 
   shoot(invaderProjectiles){
     if(!this.position) return;
+    audio.enemyShoot.play();
 
     invaderProjectiles.push(
         new InvaderProjectile({

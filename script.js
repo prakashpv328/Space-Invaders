@@ -79,13 +79,25 @@ function init(){
 }
 
 function endGame(){
-    game.over=true;
-    player.opacity=0;
+    console.log("lose");
+    audio.gameOver.play();
+
+    setTimeout(()=>{
+        player.opacity=0;
+        game.over=true;
+    },0)
 
     setTimeout(()=>{
         game.active=false;
         document.querySelector("#restartScreen").style.display="flex";
-    },1200)
+    },2000)
+
+
+    createParticles({
+        object:player,
+        color:'white',
+        fades:true
+    })
 }
 
 
@@ -223,6 +235,8 @@ function animate(){
             }
         }
 
+        if(!projectiles[i]) continue;
+
         for(let j=powerUps.length-1;j>=0;j--){
             const powerUp=powerUps[j]
             if(
@@ -235,6 +249,8 @@ function animate(){
                 powerUps.splice(j,1);
                 
                 player.powerUp='MachineGun'
+                audio.bonus.play();
+
                 setTimeout(()=>{
                     if(player) player.powerUp=null;
                 }, 5000)
@@ -329,6 +345,8 @@ function animate(){
                         fades:true
                     })
 
+                    audio.explode.play();
+
                     if(grid.invaders.length>0){
                         const firstInvader=grid.invaders[0]
                         const lastInvader=grid.invaders[grid.invaders.length-1]
@@ -376,6 +394,8 @@ function animate(){
         !game.over && 
         player?.image
     ){
+        if(frames%6===0) audio.shoot.play();
+
         projectiles.push(
             new Projectile({
                 position:{
@@ -393,6 +413,9 @@ function animate(){
 }
 
 document.querySelector('#startButton').addEventListener("click",()=>{
+    audio.backgroundMusic.play();
+    audio.start.play();
+
     document.querySelector('#startScreen').style.display="none";
     document.querySelector("#scoreContainer").style.display="block";
     init();
@@ -400,6 +423,8 @@ document.querySelector('#startButton').addEventListener("click",()=>{
 })
 
 document.querySelector("#restartButton").addEventListener("click",()=>{
+    audio.select.play();
+    
     document.querySelector("#restartScreen").style.display="none";
     init();
     animate();
@@ -425,6 +450,7 @@ addEventListener("keydown",({key})=>{
             if(player?.powerUp === 'MachineGun') return;
 
             if(player?.image){
+                audio.shoot.play();
                 projectiles.push(
                     new Projectile({
                         position:{
