@@ -40,31 +40,109 @@ body {
 }
 
 #startScreen{
-    display: flex;
+  display: flex;
 }
 
 #restartScreen{
-    display: none;
+  display: none;
 }
 
 .screenContent{
-    text-align:center;
+  text-align:center;
 }
 
 .screenContent h1{
-    color:white;
+  color:white;
 }
 
 .gameButton{
-    cursor:pointer;
-    position:relative;
-    display:inline-block;
+  cursor:pointer;
+  position:relative;
+  display:inline-block;
 }
 
 .gameButton span{
-    position:absolute;
-    color:white;
-    top:50%;
-    transform:translate(-50%,-50%);
-    left:50%;
+  position:absolute;
+  color:white;
+  top:50%;
+  transform:translate(-50%,-50%);
+  left:50%;
+}
+
+#startScreen .screenContent{
+  position:relative;
+  width:100%;
+  max-width:760px;
+  min-height:430px;
+  margin:0 auto;
+  text-align:center;
+}
+
+.bottomControl{
+  position: absolute;
+  left:0;
+  right:0;
+  bottom:18px;
+  height:90px;
+  pointer-events:none;
+}
+
+.cornerControl,
+.centerControl{
+  position:absolute;
+  text-align:center;
+  color:white;
+}
+
+.leftCorner{
+  left:18px;
+  bottom:0;
+}
+
+.rightCorner{
+  right:18px;
+  bottom:0;
+}
+
+.centerControl{
+  left:50%;
+  transform:translateX(-50%);
+  bottom:0;
+}
+
+.keyRow{
+  display:flex;
+  gap:8px;
+  justify-content:center;
+}
+
+.pixelKey {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 30px;
+  padding: 0 10px;
+  border-radius: 4px;
+  color: #dfe9ff;
+  font-weight: 700;
+  font-size: 16px;
+  background: linear-gradient(180deg, #47556b 0%, #2a3444 100%);
+  border: 2px solid #1a2230;
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.35),
+    0 2px 0 rgba(0, 0, 0, 0.45);
+}
+
+.spaceKey {
+  min-width: 92px;
+  letter-spacing: 1px;
+}
+
+.cornerControl p,
+.centerControl p {
+  margin: 6px 0 0;
+  font-size: 18px;
+  color: white;
 }
