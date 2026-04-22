@@ -79,6 +79,8 @@ function init(){
 }
 
 function endGame(){
+    if(game.over) return;
+
     console.log("lose");
     audio.gameOver.play();
 
@@ -173,7 +175,9 @@ function animate(){
         } 
 
         if(particle.opacity<=0){
-            particles.splice(i,1)
+            setTimeout(()=>{
+                particles.splice(i,1)
+            },0)
         }
         else{
             particle.update()
@@ -195,11 +199,13 @@ function animate(){
         const invaderProjectile=invaderProjectiles[i]
 
         if(invaderProjectile.position.y+invaderProjectile.height>=canvas.height){
-            invaderProjectiles.splice(i,1);
-            continue;
+            setTimeout(()=>{
+                invaderProjectiles.splice(i,1);
+            },0)
         }
-
-        invaderProjectile.update();
+        else{
+            invaderProjectile.update();
+        }
 
         if(player?.image && rectangularCollision({
             rectangle1:invaderProjectile,
@@ -231,11 +237,10 @@ function animate(){
                 // })
 
                 bomb.explode()
-                break;
             }
         }
 
-        if(!projectiles[i]) continue;
+        // if(!projectiles[i]) continue;
 
         for(let j=powerUps.length-1;j>=0;j--){
             const powerUp=powerUps[j]
@@ -254,7 +259,6 @@ function animate(){
                 setTimeout(()=>{
                     if(player) player.powerUp=null;
                 }, 5000)
-                break;
             }
         }
 
@@ -291,9 +295,10 @@ function animate(){
                         invader.position.y-bomb.position.y
                     ) < invaderRadius + bomb.radius && bomb.active
                 ){
-                    grid.invaders.splice(i,1);
                     score+=50
                     scoreEl.innerHTML=score;
+
+                    grid.invaders.splice(i,1);
 
                     createScoreLabel({
                         object:invader,
@@ -304,18 +309,6 @@ function animate(){
                         object:invader,
                         fades:true
                     })
-
-                    if(grid.invaders.length>0){
-                        const firstInvader=grid.invaders[0]
-                        const lastInvader=grid.invaders[grid.invaders.length-1]
-
-                        grid.width=lastInvader.position.x-firstInvader.position.x+lastInvader.width;
-                        grid.position.x=firstInvader.position.x;
-                    }
-                    else{
-                        grids.splice(gridindex,1)
-                    }
-                    break;
                 }
             }
 
@@ -328,42 +321,61 @@ function animate(){
                     projectile.position.x+projectile.radius>=invader.position.x &&
                     projectile.position.x-projectile.radius<=invader.position.x+invader.width &&
                     projectile.position.y+projectile.radius>=invader.position.y
-                ){
-                    grid.invaders.splice(i,1)
-                    projectiles.splice(j,1)
+                )
+                {
+                    setTimeout(()=>{
+                        const invaderFound=grid.invaders.find((invader2)=>invader2===invader)
+                        const projectileFound=projectiles.find(
+                            (projectile2)=>projectile2===projectile
+                        )
 
-                    score+=100;
-                    scoreEl.innerHTML=score;
+                        if(invaderFound && projectileFound){
 
-                    createScoreLabel({
-                        object:invader,
-                        score:100
-                    })
-
-                    createParticles({
-                        object:invader,
-                        fades:true
-                    })
-
-                    audio.explode.play();
-
-                    if(grid.invaders.length>0){
-                        const firstInvader=grid.invaders[0]
-                        const lastInvader=grid.invaders[grid.invaders.length-1]
-
-                        grid.width=lastInvader.position.x-firstInvader.position.x+lastInvader.width;
-                        grid.position.x=firstInvader.position.x;
-                    }
-                    else{
-                        grids.splice(gridindex,1)
-                    }
-                    break;
+                            score+=100;
+                            scoreEl.innerHTML=score;
+        
+                            createScoreLabel({
+                                object:invader,
+                                score:100
+                            })
+        
+                            createParticles({
+                                object:invader,
+                                fades:true
+                            })
+        
+                            audio.explode.play();
+                            grid.invaders.splice(i,1);
+                            projectiles.splice(j,1)
+        
+                            if(grid.invaders.length>0){
+                                const firstInvader=grid.invaders[0]
+                                const lastInvader=grid.invaders[grid.invaders.length-1]
+        
+                                grid.width=lastInvader.position.x-firstInvader.position.x+lastInvader.width;
+                                grid.position.x=firstInvader.position.x;
+                            }
+                            else{
+                                grids.splice(gridindex,1)
+                            }
+                        }
+                    },0)
                 }
             }
+
+            if(
+            player?.image &&
+            rectangularCollision({
+                rectangle1:invader,
+                rectangle2:player
+            }) && !game.over)
+            {
+                endGame();
+            }  
         }
     })
 
-    if(player){
+    if(player?.image){
         if(keys.left.pressed && player.position.x>=0){
             player.velocity.x=-7
             player.rotation=-0.15;
@@ -407,9 +419,7 @@ function animate(){
             })
         )
     }
-
     frames++;
-
 }
 
 document.querySelector('#startButton').addEventListener("click",()=>{
