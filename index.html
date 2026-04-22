@@ -53,7 +53,34 @@
 
 
                 <div id="settingsPopup" class="settingsPopup hidden" role="dialog" aria-modal="true" aria-label="Settings">
-                    <img src="./img/startScreenBackground.png" alt="Settings Popup" />
+                    <div class="settingsPanel">
+                        <img class="settingsBg" src="./img/startScreenBackground.png" alt="Settings Background" />
+                        
+                        <div class="settingsContent">
+                            <h2>Settings</h2>
+                            <p>Select Spaceship</p>
+                            
+                            <div class="shipOptions">
+                                <button class="shipOption selected" data-ship="./img/spaceship.png">
+                                    <img src="./img/spaceship.png" alt="Ship 1" />
+                                </button>
+                                <button class="shipOption" data-ship="./img/spaceship2.png">
+                                    <img src="./img/spaceship2.png" alt="Ship 2" />
+                                </button>
+                                <button class="shipOption" data-ship="./img/spaceship3.png">
+                                    <img src="./img/spaceship3.png" alt="Ship 3" />
+                                </button>
+                                <button class="shipOption" data-ship="./img/spaceship4.png">
+                                    <img src="./img/spaceship4.png" alt="Ship 4" />
+                                </button>
+                            </div>
+                          
+                            <div class="settingsActions">
+                                <button id="settingsCancel" class="settingsBtn secondary">Cancel</button>
+                                <button id="settingsSave" class="settingsBtn primary">Save</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
 

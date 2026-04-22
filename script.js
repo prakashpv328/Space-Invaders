@@ -1,8 +1,12 @@
 const scoreEl=document.querySelector('#scoreEl');
 const canvas=document.querySelector("canvas");
 const c=canvas.getContext("2d");
+
 const settingsButton=document.querySelector('#settingsButton');
 const settingsPopup=document.querySelector('#settingsPopup');
+const settingsSave = document.querySelector('#settingsSave');
+const settingsCancel = document.querySelector('#settingsCancel');
+const shipOptions = document.querySelectorAll('.shipOption');
 
 canvas.width=1250;
 canvas.height=700;
@@ -50,6 +54,41 @@ let lastShotTime = {
   red: 0,
   yellow: 0
 }
+
+let tempSelectedShip = localStorage.getItem('selectedShip') || './img/spaceship.png';
+
+function markSelected(shipPath) {
+  shipOptions.forEach(btn => {
+    btn.classList.toggle('selected', btn.dataset.ship === shipPath);
+  });
+}
+
+settingsButton?.addEventListener('click', (e) => {
+  e.stopPropagation();
+  tempSelectedShip = localStorage.getItem('selectedShip') || './img/spaceship.png';
+  markSelected(tempSelectedShip);
+  settingsPopup?.classList.remove('hidden');
+});
+
+shipOptions.forEach(btn => {
+  btn.addEventListener('click', () => {
+    tempSelectedShip = btn.dataset.ship;
+    markSelected(tempSelectedShip);
+  });
+});
+
+settingsCancel?.addEventListener('click', () => {
+  settingsPopup?.classList.add('hidden');
+});
+
+settingsSave?.addEventListener('click', () => {
+  localStorage.setItem('selectedShip', tempSelectedShip);
+  settingsPopup?.classList.add('hidden');
+});
+
+settingsPopup?.addEventListener('click', (e) => {
+  if (e.target === settingsPopup) settingsPopup.classList.add('hidden');
+});
 
 function updateGridBounds(grid,gridindex){
     if(grid.invaders.length===0){
@@ -454,18 +493,6 @@ document.querySelector('#startButton').addEventListener("click",()=>{
     init();
     animate();
 })
-
-settingsButton?.addEventListener('click', (e) => {
-  e.stopPropagation();
-  settingsPopup?.classList.toggle('hidden');
-});
-
-document.addEventListener('click', (e) => {
-  if (!settingsPopup || settingsPopup.classList.contains('hidden')) return;
-  if (!settingsPopup.contains(e.target) && !settingsButton.contains(e.target)) {
-    settingsPopup.classList.add('hidden');
-  }
-});
 
 document.querySelector("#restartButton").addEventListener("click",()=>{
     audio.select.play();

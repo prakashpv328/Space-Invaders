@@ -13,7 +13,14 @@ class Player{
         // }
 
         const image=new Image();
-        image.src="./img/spaceship.png";
+        
+        const selectedShip=localStorage.getItem('selectedShip') || './img/spaceship.png';
+        image.src=selectedShip;
+
+        image.onerror=()=>{
+            image.src='./img/spaceship.png';
+        }
+
         image.onload=()=>{
             const scale=0.15;
             this.image=image;
