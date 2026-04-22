@@ -53,8 +53,8 @@ const FIRE_RATE={
 }
 
 let lastShotTime = {
-  red: 0,
-  yellow: 0
+    red: 0,
+    yellow: 0
 }
 
 let tempSelectedShip = localStorage.getItem('selectedShip') || './img/spaceships/spaceship1.png';
@@ -63,47 +63,47 @@ const storedSoundEnabled=localStorage.getItem('soundEnabled');
 let tempSoundEnabled=storedSoundEnabled===null?true:storedSoundEnabled==='true';
 
 function markSelected(shipPath) {
-  shipOptions.forEach(btn => {
-    btn.classList.toggle('selected', btn.dataset.ship === shipPath);
-  });
+    shipOptions.forEach(btn => {
+        btn.classList.toggle('selected', btn.dataset.ship === shipPath);
+    });
 }
 
 settingsButton?.addEventListener('click', (e) => {
-  e.stopPropagation();
-  tempSelectedShip = localStorage.getItem('selectedShip') || './img/spaceships/spaceship1.png';
-  markSelected(tempSelectedShip);
-  tempSoundEnabled = storedSoundEnabled === null ? true : storedSoundEnabled === 'true';
-  markSoundSelected(tempSoundEnabled);
-  settingsPopup?.classList.remove('hidden');
+    e.stopPropagation();
+    tempSelectedShip = localStorage.getItem('selectedShip') || './img/spaceships/spaceship1.png';
+    markSelected(tempSelectedShip);
+    tempSoundEnabled = storedSoundEnabled === null ? true : storedSoundEnabled === 'true';
+    markSoundSelected(tempSoundEnabled);
+    settingsPopup?.classList.remove('hidden');
 });
 
 shipOptions.forEach(btn => {
-  btn.addEventListener('click', () => {
-    tempSelectedShip = btn.dataset.ship;
-    markSelected(tempSelectedShip);
-  });
+    btn.addEventListener('click', () => {
+        tempSelectedShip = btn.dataset.ship;
+        markSelected(tempSelectedShip);
+    });
 });
 
 soundOptions.forEach(btn => {
-  btn.addEventListener('click', () => {
-    tempSoundEnabled = btn.dataset.sound === 'on';
-    markSoundSelected(tempSoundEnabled);
-  });
+    btn.addEventListener('click', () => {
+        tempSoundEnabled = btn.dataset.sound === 'on';
+        markSoundSelected(tempSoundEnabled);
+    });
 });
 
 settingsCancel?.addEventListener('click', () => {
-  settingsPopup?.classList.add('hidden');
+    settingsPopup?.classList.add('hidden');
 });
 
 settingsSave?.addEventListener('click', () => {
-  localStorage.setItem('selectedShip', tempSelectedShip);
-  localStorage.setItem('soundEnabled', tempSoundEnabled);
-  applySoundSetting(tempSoundEnabled);
-  settingsPopup?.classList.add('hidden');
+    localStorage.setItem('selectedShip', tempSelectedShip);
+    localStorage.setItem('soundEnabled', tempSoundEnabled);
+    applySoundSetting(tempSoundEnabled);
+    settingsPopup?.classList.add('hidden');
 });
 
 settingsPopup?.addEventListener('click', (e) => {
-  if (e.target === settingsPopup) settingsPopup.classList.add('hidden');
+    if (e.target === settingsPopup) settingsPopup.classList.add('hidden');
 });
 
 function markSoundSelected(isEnabled){
@@ -326,13 +326,6 @@ function animate(){
                 ) < projectile.radius+bomb.radius && !bomb.active
             ){
                 projectiles.splice(i,1);
-                // score+=50;
-                // scoreEl.innerHTML=score;
-
-                // createScoreLabel({
-                //     object:bomb,
-                //     score:50
-                // })
 
                 bomb.explode()
                 break;
