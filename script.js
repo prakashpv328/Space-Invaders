@@ -525,20 +525,45 @@ document.querySelector("#restartButton").addEventListener("click",()=>{
 })
 
 addEventListener("keydown",({key})=>{
+
+    if(key==='Enter'){
+        const startScreen=document.querySelector('#startScreen');
+        const restartScreen=document.querySelector('#restartScreen');
+
+        const isStartVisible=startScreen && getComputedStyle(startScreen).display!=='none';
+        const isRestartVisible=restartScreen && getComputedStyle(restartScreen).display!=='none';
+
+        if(isStartVisible){
+            document.querySelector('#startButton').click();
+            return;
+        }
+
+        if(isRestartVisible){
+            document.querySelector('#restartButton').click();
+            return;
+        }
+    }
+
     if(game.over) return;
 
     switch(key){
         case 'a':
+        case 'A':
         case 'ArrowLeft':
             keys.left.pressed=true;
             break;
 
         case 'd':
+        case 'D':
         case 'ArrowRight':
             keys.right.pressed=true;
             break;
 
+
+        case 'w':
+        case 'W':
         case ' ':
+        case 'ArrowUp':
             keys.space.pressed=true;
 
             const now = performance.now()
@@ -568,15 +593,20 @@ addEventListener("keydown",({key})=>{
 addEventListener("keyup",({key})=>{
     switch(key){
         case 'a':
+        case 'A':
         case 'ArrowLeft':
             keys.left.pressed=false;
             break;
 
         case 'd':
+        case 'D':
         case 'ArrowRight':
             keys.right.pressed=false;
             break;
 
+        case 'w':
+        case 'W':
+        case 'ArrowUp':
         case ' ':
             keys.space.pressed=false;
             break;
