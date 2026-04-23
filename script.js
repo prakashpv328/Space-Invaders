@@ -15,6 +15,9 @@ const startScreen=document.querySelector('#startScreen');
 const restartScreen=document.querySelector('#restartScreen');
 const scoreContainer=document.querySelector('#scoreContainer');
 
+const pauseToggleBtn=document.querySelector('#pauseToggleBtn');
+const pauseToggleIcon=document.querySelector('#pauseToggleIcon');
+
 const soundOptions=document.querySelectorAll('.soundOption');
 
 canvas.width=1250;
@@ -63,6 +66,8 @@ let lastShotTime = {
     red: 0,
     yellow: 0
 }
+
+let isPaused=false;
 
 let tempSelectedShip = localStorage.getItem('selectedShip') || './img/spaceships/spaceship1.png';
 
@@ -150,6 +155,10 @@ function startGame(){
     startScreen.style.display="none";
     restartScreen.style.display="none";
     scoreContainer.style.display="block";
+    pauseToggleBtn.style.display="block";
+
+    isPaused=false;
+    syncPauseIcon();
 
     init();
     animate();
@@ -157,9 +166,14 @@ function startGame(){
 
 function restartGame(){
     audio.select.play();
+    audio.backgroundMusic.play();
 
     restartScreen.style.display="none";
     scoreContainer.style.display="block";
+    pauseToggleBtn.style.display="block";
+
+    isPaused=false;
+    syncPauseIcon();
 
     init();
     animate();
@@ -170,15 +184,59 @@ function goToLobby(){
 
     game.active=false;
     game.over=false;
+    isPaused=false;
 
     restartScreen.style.display="none";
     scoreContainer.style.display="none";
     startScreen.style.display="flex";
+    pauseToggleBtn.style.display="none";
+
+    syncPauseIcon();
 }
 
 startButton?.addEventListener("click",startGame);
 restartButton?.addEventListener("click",restartGame);
 backToLobbyButton?.addEventListener("click",goToLobby);
+
+function syncPauseIcon(){
+    if(!pauseToggleIcon) return;
+
+    if(isPaused){
+        pauseToggleIcon.src="./img/components/play.png";
+        pauseToggleIcon.alt="Play";
+        pauseToggleBtn?.setAttribute('aria-label','Play');
+    }
+    else{
+        pauseToggleIcon.src="./img/components/pause.png";
+        pauseToggleIcon.alt="Pause";
+        pauseToggleBtn?.setAttribute('aria-label','Pause');
+    }
+}
+
+function pauseGame(){
+    if(!game.active || game.over || isPaused) return;
+
+    isPaused=true;
+    audio.backgroundMusic.pause();
+    syncPauseIcon();
+}
+
+function resumeGame(){
+    if(!game.active || game.over || !isPaused) return;
+
+    isPaused=false;
+    audio.backgroundMusic.play();
+    syncPauseIcon();
+}
+
+function togglePause(){
+    if(!game.active || game.over) return;
+
+    if(isPaused) resumeGame();
+    else pauseGame();
+}
+
+pauseToggleBtn?.addEventListener("click",togglePause);
 
 function init(){
     player=new Player();
@@ -232,6 +290,9 @@ function endGame(){
 
     player.opacity=0;
     game.over=true;
+    isPaused=false;
+    pauseToggleBtn.style.display="none";
+    syncPauseIcon();
 
     setTimeout(()=>{
         game.active=false;
@@ -249,7 +310,10 @@ function endGame(){
 
 function animate(){
     if(!game.active) return;
+
     requestAnimationFrame(animate);
+
+    if(isPaused) return;
 
     const msNow=window.performance.now();
     const elapsed=msNow-msPrev;
@@ -550,23 +614,15 @@ function animate(){
 }
 
 
-document.querySelector('#startButton').addEventListener("click",()=>{
-    audio.backgroundMusic.play();
-    audio.start.play();
+// document.querySelector('#startButton').addEventListener("click",()=>{
+//     audio.backgroundMusic.play();
+//     audio.start.play();
 
-    document.querySelector('#startScreen').style.display="none";
-    document.querySelector("#scoreContainer").style.display="block";
-    init();
-    animate();
-})
+//     document.querySelector('#startScreen').style.display="none";
+//     document.querySelector("#scoreContainer").style.display="block";
+//     init();
+//     animate();
 
-document.querySelector("#restartButton").addEventListener("click",()=>{
-    audio.select.play();
-    
-    document.querySelector("#restartScreen").style.display="none";
-    init();
-    animate();
-})
 
 addEventListener("keydown",({key})=>{
 
@@ -592,6 +648,11 @@ addEventListener("keydown",({key})=>{
             goToLobby();
             return;
         }
+    }
+
+    if(key==='p' || key==='P'){
+        togglePause();
+        return;
     }
 
     if(game.over) return;

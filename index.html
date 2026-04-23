@@ -13,12 +13,18 @@
               <span>Score:</span> <span id="scoreEl">0</span>
             </p>
 
+            <button id="pauseToggleBtn" type="button" aria-label="pause or Play">
+                <img id="pauseToggleIcon" src="./img/components/pause.png" alt="Pause">
+            </button>
+
             <canvas></canvas>
 
             <div id="startScreen">
+
                 <button id="settingsButton" aria-label="Open Settings">
                     <img src="./img/components/settings.png" alt="Settings">
                 </button>
+                
                 <div class="screenContent">
                     <h1>Space Invaders</h1>
                     <div id="startButton" class="gameButton">
@@ -101,7 +107,7 @@
             <div id="restartScreen">
                 <div class="screenContent">
                     <h1>Game Over</h1>
-                    
+
                     <div class="gameOverActions">
                         <div id="restartButton" class="gameButton">
                             <img src="./img/components/button.png" alt="Restart Button">

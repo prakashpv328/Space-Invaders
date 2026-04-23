@@ -31,6 +31,33 @@ canvas{
   display: none;
 }
 
+#pauseToggleBtn{
+  position:absolute;
+  z-index:10;
+  left:10px;
+  top:38px;
+  width:40px;
+  height:40px;
+  padding:0;
+  border:none;
+  background:transparent;
+  cursor:pointer;
+  display:none;
+}
+
+#pauseToggleBtn img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+  filter:drop-shadow(0 2px 6px rgba(0,0,0,0.45));
+  transition:transform 0.15s ease;
+}
+
+#pauseToggleBtn:hover img{
+  transform:scale(1.07);
+}
+
 #startScreen,
 #restartScreen{
   position: absolute;
