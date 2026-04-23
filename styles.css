@@ -57,6 +57,14 @@ canvas{
   text-align: center;
 }
 
+.gameOverActions{
+  display:flex;
+  gap:14px;
+  justify-content:center;
+  align-items:center;
+  margin-top:12px;
+}
+
 /* .screenContent h1{
   color: #fff;
 } */

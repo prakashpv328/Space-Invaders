@@ -8,6 +8,13 @@ const settingsSave = document.querySelector('#settingsSave');
 const settingsCancel = document.querySelector('#settingsCancel');
 const shipOptions = document.querySelectorAll('.shipOption');
 
+const startButton=document.querySelector('#startButton');
+const restartButton=document.querySelector('#restartButton');
+const backToLobbyButton=document.querySelector('#backToLobbyButton')
+const startScreen=document.querySelector('#startScreen');
+const restartScreen=document.querySelector('#restartScreen');
+const scoreContainer=document.querySelector('#scoreContainer');
+
 const soundOptions=document.querySelectorAll('.soundOption');
 
 canvas.width=1250;
@@ -135,6 +142,43 @@ function updateGridBounds(grid,gridindex){
     grid.width=lastInvader.position.x-firstInvader.position.x+lastInvader.width;
     grid.position.x=firstInvader.position.x;
 }
+
+function startGame(){
+    audio.backgroundMusic.play();
+    audio.start.play();
+
+    startScreen.style.display="none";
+    restartScreen.style.display="none";
+    scoreContainer.style.display="block";
+
+    init();
+    animate();
+}
+
+function restartGame(){
+    audio.select.play();
+
+    restartScreen.style.display="none";
+    scoreContainer.style.display="block";
+
+    init();
+    animate();
+}
+
+function goToLobby(){
+    audio.select.play();
+
+    game.active=false;
+    game.over=false;
+
+    restartScreen.style.display="none";
+    scoreContainer.style.display="none";
+    startScreen.style.display="flex";
+}
+
+startButton?.addEventListener("click",startGame);
+restartButton?.addEventListener("click",restartGame);
+backToLobbyButton?.addEventListener("click",goToLobby);
 
 function init(){
     player=new Player();
@@ -527,19 +571,25 @@ document.querySelector("#restartButton").addEventListener("click",()=>{
 addEventListener("keydown",({key})=>{
 
     if(key==='Enter'){
-        const startScreen=document.querySelector('#startScreen');
-        const restartScreen=document.querySelector('#restartScreen');
 
         const isStartVisible=startScreen && getComputedStyle(startScreen).display!=='none';
         const isRestartVisible=restartScreen && getComputedStyle(restartScreen).display!=='none';
 
         if(isStartVisible){
-            document.querySelector('#startButton').click();
+            startButton?.click();
             return;
         }
 
         if(isRestartVisible){
-            document.querySelector('#restartButton').click();
+            restartButton?.click();
+            return;
+        }
+    }
+
+    if(key==='Escape'){
+        const isRestartVisible=restartScreen && getComputedStyle(restartScreen).display!=='none';
+        if(isRestartVisible){
+            goToLobby();
             return;
         }
     }
