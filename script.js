@@ -20,8 +20,8 @@ const pauseToggleIcon=document.querySelector('#pauseToggleIcon');
 
 const soundOptions=document.querySelectorAll('.soundOption');
 
-canvas.width=1250;
-canvas.height=700;
+const GAME_WIDTH=1250;
+const GAME_HEIGHT=700;
 
 let player=null;
 let particles=[];
@@ -306,6 +306,14 @@ function endGame(){
         fades:true
     })
 }
+
+function resizeCanvas(){
+    canvas.width=GAME_WIDTH;
+    canvas.height=GAME_HEIGHT;
+}
+
+resizeCanvas();
+window.addEventListener("resize",resizeCanvas);
 
 
 function animate(){

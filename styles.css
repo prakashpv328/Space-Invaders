@@ -8,36 +8,43 @@ body{
   font-size: 14px;
   height: 100vh;
   color: #fff;
+  overflow: hidden;
 }
 
 canvas{
-  max-width: 100%;
-  height: auto;
+  width: 100%;
+  height:100%;
+  display: block;
+  background: #000;
 }
 
 
 #parentDiv{
   position: relative;
   user-select: none;
+  width: min(1250px,calc(100vw-24px));
+  aspect-ratio: 1250/700;
+  margin:0 auto;
 }
 
 #scoreContainer{
   position: absolute;
   z-index: 10;
   color: #fff;
-  left: 10px;
-  top: 10px;
+  left: clamp(8px,1vw,12px);
+  top: clamp(8px,1vw,12px);
   margin: 0;
   display: none;
+  font-size: clamp(12px,1.1vw,16px);
 }
 
 #pauseToggleBtn{
   position:absolute;
   z-index:10;
-  left:10px;
-  top:38px;
-  width:40px;
-  height:40px;
+  left: clamp(8px,1vw,12px);
+  top: clamp(34px,4vw,44px);
+  width:clamp(32px,3vw,44px);
+  height:clamp(32px,3vw,44px);
   padding:0;
   border:none;
   background:transparent;
@@ -62,98 +69,105 @@ canvas{
 #restartScreen{
   position: absolute;
   inset: 0;
-  background: url("./img/components/startScreenBackground.png");
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
+  background: url("./img/components/startScreenBackground.png") center/contain no-repeat;
+  z-index: 20;
   align-items: center;
   justify-content: center;
-  z-index: 20;
+  overflow:hidden;
 }
 
 #startScreen{
   display: flex;
-  overflow: hidden;
 }
+
 
 #restartScreen{
   display: none;
 }
 
-.screenContent{
-  text-align: center;
+#startScreen .screenContent,
+#restartScreen .screenContent{
+  position:relative;
+  width:min(760px,92%);
+  min-height: clamp(280px,42vw,430px);
+  margin:0 auto;
+  text-align:center;
+  box-sizing: border-box;
 }
 
-.gameOverActions{
-  display:flex;
-  gap:14px;
-  justify-content:center;
-  align-items:center;
-  margin-top:12px;
+#startScreen .screenContent h1
+#restartScreen .screenContent h1{
+  margin:clamp(10px,1.8vw,24px) 0 clamp(8px,1vw,12px);
+  font-size:clamp(22px,3vw,42px);
+  line-height:1.1;
+  font-weight:700;
 }
 
-/* .screenContent h1{
-  color: #fff;
-} */
+#startButton img,
+#restartButton img,
+#backToLobbyButton img{
+  width:clamp(95px,9vw,150px);
+  height:auto;
+  display: block;
+}
 
 .gameButton{
   cursor: pointer;
   position: relative;
   display: inline-block;
+  line-height:0;
 }
 
 .gameButton span{
-  position: absolute;
-  color: #fff;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform: translate(-50%,-50%);
+  color:#fff;
+  font-size:clamp(11px,1vw,16px);
+  white-space:nowrap;
+  line-height: 1;
+  pointer-events:none;
 }
 
-#startScreen .screenContent{
-  position: relative;
-  width: 100%;
-  max-width: 760px;
-  min-height: 430px;
-  margin: 0 auto;
-  text-align: center;
+.gameOverActions{
+  display:flex;
+  gap:clamp(8px,1vw,14px);
+  justify-content:center;
+  align-items:center;
+  margin-top:clamp(8px,1vw,12px);
+  flex-wrap:wrap;
 }
 
 .bottomControls{
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 18px;
-  height: 90px;
+  bottom: clamp(24px,4vw,46px);
+  height: clamp(70px,9vw,96px);
   pointer-events: none;
 }
 
-.cornerControl,
+.leftCorner,
+.rightCorner,
 .centerControl{
   position: absolute;
+  bottom: 0;
   text-align: center;
-  /* color: #fff; */
 }
 
-.leftCorner{
-  left: 18px;
-  bottom: 0;
-}
 
-.rightCorner{
-  right: 18px;
-  bottom: 0;
-}
+.leftCorner{ left: clamp(6px, 1.4vw, 18px); }
+.rightCorner{ right: clamp(6px, 1.4vw, 18px); }
 
 .centerControl{
   left: 50%;
   transform: translateX(-50%);
-  bottom: 0;
 }
 
 .keyRow{
   display: flex;
-  gap: 8px;
+  gap: clamp(3px,0.6vw,8px);
   justify-content: center;
 }
 
@@ -161,13 +175,13 @@ canvas{
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 26px;
-  height: 30px;
-  padding: 0 10px;
+  min-width: clamp(24px, 2.2vw, 34px);
+  height: clamp(24px, 2.3vw, 34px);
+  padding: 0 clamp(6px, .7vw, 10px);
+  font-size: clamp(11px, 1vw, 14px);
   border-radius: 4px;
   color: #dfe9ff;
   font-weight: 700;
-  font-size: 16px;
   background: linear-gradient(180deg, #47556b 0%, #2a3444 100%);
   border: 2px solid #1a2230;
   box-shadow:
@@ -177,25 +191,24 @@ canvas{
 }
 
 .spaceKey {
-  min-width: 92px;
-  letter-spacing: 1px;
+  min-width: clamp(72px,8vw,110px);
 }
 
 .cornerControl p,
 .centerControl p{
-  margin: 6px 0 0;
-  font-size: 18px;
-  /* color: #fff; */
+  margin: clamp(4px,.7vw,7px) 0 0;
+  font-size: clamp(12px,1.6vw,18px);
+  line-height:1;
 }
 
 #settingsButton{
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: clamp(8px, 1vw, 14px);
+  right: clamp(8px, 1vw, 14px);
+  width: clamp(24px, 2.2vw, 36px);
+  height: clamp(24px, 2.2vw, 36px);
   z-index: 80;
-  width: 50px;
-  height: 50px;
-  border: none;
+  border: 0;
   background: transparent;
   padding: 0;
   cursor: pointer;
@@ -213,7 +226,6 @@ canvas{
 #settingsButton:hover img{
   transform: scale(1.07);
 }
-
 
 .settingsPopup{
   position: absolute;
@@ -346,6 +358,40 @@ canvas{
 .soundOption.selected{
   border-color: #00e5cc;
   box-shadow: 0 0 0 2px rgba(0, 229, 204, 0.25);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.screenContent{
+  text-align: center;
+}
+.screenContent h1{
+  color: #fff;
+}
+
+
+.cornerControl,
+.centerControl{
+  position: absolute;
+  text-align: center;
+  color: #fff;
 }
 
 .settingsBtn.primary{
