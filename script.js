@@ -38,15 +38,15 @@ let keys={
     space:{pressed:false}
 }
 
-let frames=0;
-let randomInterval=Math.floor(Math.random()*500+500);
-
 let game={
     over:false,
     active:true
 }
 
-let spawnBuffer=500;
+let frames=0;
+let spawnBufferms=2200;
+let nextGridSpawnTime=0;
+const MIN_GRID_GAP_MS=1200;
 
 let fps=60;
 let fpsInterval=1000/fps;
@@ -255,9 +255,11 @@ function init(){
         space:{pressed:false}
     }
 
+    
     frames=0;
-    randomInterval=Math.floor(Math.random()*500+500);
-    spawnBuffer=500;
+    spawnBufferMs=2200;
+    const now=performance.now();
+    nextGridSpawnTime=now+(Math.random()*800+1400);
 
     game={
         over:false,
@@ -587,12 +589,24 @@ function animate(){
         player.update();
     }
 
-    if(frames%randomInterval===0){
-        spawnBuffer=spawnBuffer<0?100:spawnBuffer;
-        grids.push(new Grid())
-        randomInterval=Math.floor(Math.random()*500+spawnBuffer);
-        frames=0;
-        spawnBuffer-=100
+    const nowTime=performance.now();
+
+    if(nowTime>=nextGridSpawnTime){
+
+        const topBusy=grids.some(grid=>grid.position.y<60);
+
+        if(topBusy){
+            nextGridSpawnTime=nowTime+250
+        }
+        else{
+            grids.push(new Grid());
+            spawnBufferMs=Math.max(MIN_GRID_GAP_MS,spawnBufferMs-120);
+            const delay=Math.max(
+                MIN_GRID_GAP_MS,
+                spawnBufferMs+Math.random()*700
+            );
+            nextGridSpawnTime=nowTime+delay;
+        }
     }
 
     const now = performance.now()
