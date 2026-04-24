@@ -11,26 +11,13 @@ function rectangularCollision({rectangle1,rectangle2}){
     )
 }
 
-function createScoreLabel({score=100,object}){
-    const scoreLabel=document.createElement('label');
-    scoreLabel.innerHTML=score;
-    scoreLabel.style.position='absolute'
-    scoreLabel.style.color='white';
-    scoreLabel.style.top=object.position.y+'px';
-    scoreLabel.style.left=object.position.x+'px';
-    scoreLabel.style.userSelect='none';
-    document.querySelector('#parentDiv').appendChild(scoreLabel);
-
-    gsap.to(scoreLabel,{
-        opacity:0,
-        y:-30,
-        duration:0.75,
-        onComplete:()=>{
-            const parent=document.querySelector('#parentDiv')
-            if(parent && parent.contains(scoreLabel)){
-                parent.removeChild(scoreLabel);
-            }
-        }
+function createScoreLabel({ object, score }) {
+    hitLabels.push({
+        x: object.position.x + object.width / 2,
+        y: object.position.y + object.height / 2,
+        value: score,
+        alpha: 1,
+        life: 45
     });
 }
 

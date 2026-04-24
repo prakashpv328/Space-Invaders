@@ -31,6 +31,7 @@ let invaderProjectiles=[];
 let bombs=[];
 let powerUps=[];
 let score=0;
+let hitLabels=[];
 
 let keys={
     left:{pressed:false},
@@ -73,6 +74,7 @@ let tempSelectedShip = localStorage.getItem('selectedShip') || './img/spaceships
 
 const storedSoundEnabled=localStorage.getItem('soundEnabled');
 let tempSoundEnabled=storedSoundEnabled===null?true:storedSoundEnabled==='true';
+
 
 function markSelected(shipPath) {
     shipOptions.forEach(btn => {
@@ -247,6 +249,7 @@ function init(){
     bombs=[];
     powerUps=[];
     score=0;
+    hitLabels=[];
     scoreEl.innerHTML=score;
 
     keys={
@@ -336,6 +339,25 @@ function animate(){
 
     c.fillStyle="black";
     c.fillRect(0,0,canvas.width,canvas.height);
+
+    for(let i=hitLabels.length-1;i>=0;i--){
+        const l=hitLabels[i];
+        l.y-=0.6;
+        l.life-=1;
+        l.alpha-=0.02;
+
+        c.save();
+        c.globalAlpha=Math.max(l.alpha,0);
+        c.fillStyle='white';
+        c.font='18px Arial';
+        c.textAlign='center';
+        c.fillText(String(l.value),l.x,l.y);
+        c.restore();
+
+        if(l.life<=0 || l.alpha<=0){
+            hitLabels.splice(i,1);
+        }
+    }
 
     if(frames%500===0){
         powerUps.push(
