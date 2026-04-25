@@ -6,8 +6,9 @@ class Invader {
             y: 0
         }
 
-        this.family=Math.random()<0.5?1:2;
-        this.particleColor = this.family === 2 ? '#ff3b3b' : '#7d3cff';
+        let random=Math.random();
+        this.family = random < 0.33 ? 1 : random < 0.66 ? 2 : 3;
+        this.particleColor = this.family === 1 ?  '#7d3cff' : this.family === 2 ? '#ff3b3b' : '#22ff00';
       
         this.frames=0;
         this.frameHold=20;
@@ -21,6 +22,10 @@ class Invader {
             2:{
                 up:new Image(),
                 down:new Image()
+            },
+            3:{
+                up:new Image(),
+                down:new Image()
             }
         }
 
@@ -28,6 +33,8 @@ class Invader {
         this.images[1].down.src='./img/invaders/invaderDown1.png';
         this.images[2].up.src='./img/invaders/invaderUp2.png';
         this.images[2].down.src='./img/invaders/invaderDown2.png';
+        this.images[3].up.src='./img/invaders/invaderUp3.png';
+        this.images[3].down.src='./img/invaders/invaderDown3.png';
 
         const pair=this.images[this.family];
 
@@ -50,7 +57,6 @@ class Invader {
     }
 
     update({ velocity }) {
-        
         this.position.x+=velocity.x;
         this.position.y+=velocity.y;
         this.frames++;
