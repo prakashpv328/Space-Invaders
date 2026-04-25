@@ -1,68 +1,67 @@
 class Invader {
     constructor({ position }){
+        this.position=position;
         this.velocity={
             x: 0,
             y: 0
         }
+
+        this.family=Math.random()<0.5?1:2;
+        this.particleColor = this.family === 2 ? '#ff3b3b' : '#7d3cff';
       
-        this.image = null
-        this.width = 0
-        this.height = 0
-        this.position = null
+        this.frames=0;
+        this.frameHold=20;
+        this.isUp=true;
       
-        this.frames={
-            up:new Image(),
-            down:new Image()
-        }
-      
-        this.frames.up.src='./img/invaders/invaderUp1.png'
-        this.frames.down.src='./img/invaders/invaderDown1.png'
-      
-        this.currentFrame='up'
-        this.lastSwapTime=performance.now()
-        this.swapInterval=1000
-      
-        this.frames.up.onload= () => {
-            const scale=1
-            this.image=this.frames.up
-            this.width=this.image.width*scale
-            this.height=this.image.height*scale
-            this.position={
-                x:position.x,
-                y:position.y
+        this.images={
+            1:{
+                up:new Image(),
+                down:new Image()
+            },
+            2:{
+                up:new Image(),
+                down:new Image()
             }
         }
-    }
 
-    swapSprinteByTime(){
-        const now = performance.now();
-        if(now - this.lastSwapTime > this.swapInterval){
-            this.currentFrame=this.currentFrame==='up'?'down':'up';
-            this.image=this.currentFrame==='up'?this.frames.up:this.frames.down;
-            this.lastSwapTime=now;
+        this.images[1].up.src='./img/invaders/invaderUp1.png';
+        this.images[1].down.src='./img/invaders/invaderDown1.png';
+        this.images[2].up.src='./img/invaders/invaderUp2.png';
+        this.images[2].down.src='./img/invaders/invaderDown2.png';
+
+        const pair=this.images[this.family];
+
+        pair.up.onload=()=>{
+            this.image=pair.up;
+            this.width=pair.up.width;
+            this.height=pair.up.height;
         }
+
     }
 
     draw() {
-        if (!this.image || !this.position) return
+        if (!this.image) return
 
         c.drawImage(
             this.image,
             this.position.x,
             this.position.y,
-            this.width,
-            this.height
         )
     }
 
     update({ velocity }) {
-        if (!this.image || !this.position) return
+        
+        this.position.x+=velocity.x;
+        this.position.y+=velocity.y;
+        this.frames++;
 
-        this.swapSprinteByTime()
+        if(this.frames%this.frameHold===0){
+            this.isUp=!this.isUp;
+            const pair=this.images[this.family];
+            this.image=this.isUp?pair.up:pair.down;
+        }
 
         this.draw()
-        this.position.x+=velocity.x
-        this.position.y+=velocity.y
     }
 
     shoot(invaderProjectiles){

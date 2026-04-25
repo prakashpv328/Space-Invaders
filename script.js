@@ -541,7 +541,8 @@ function animate(){
 
                     createParticles({
                         object:invader,
-                        fades:true
+                        fades:true,
+                        color:'orange'
                     })
 
                     updateGridBounds(grid,gridindex)
@@ -573,7 +574,8 @@ function animate(){
 
                     createParticles({
                         object:invader,
-                        fades:true
+                        fades:true,
+                        color:invader.particleColor
                     })
 
                     audio.explode.play();
