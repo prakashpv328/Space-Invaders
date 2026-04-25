@@ -369,7 +369,8 @@ function animate(){
                 velocity:{
                     x:5,
                     y:0
-                }
+                },
+                type:'random'
             })
         )
     }
@@ -447,8 +448,26 @@ function animate(){
             rectangle1:invaderProjectile,
             rectangle2:player
         }) && !game.over){
-            invaderProjectiles.splice(i,1);
-            endGame();
+            if(player.shieldActive && player.shieldTimer>0){
+                invaderProjectiles.splice(i,1);
+
+                createParticles({
+                    object:{
+                        position:{
+                            x:invaderProjectile.position.x,
+                            y:invaderProjectile.position.y
+                        },
+                        width:10,
+                        height:10
+                    },
+                    color:'cyan',
+                    fades:true
+                });
+            }
+            else{
+                invaderProjectiles.splice(i,1);
+                endGame();
+            }
         }   
     }
 
@@ -484,12 +503,12 @@ function animate(){
                 projectiles.splice(i,1);
                 powerUps.splice(j,1);
                 
-                player.powerUp='MachineGun'
-                audio.bonus.play();
-
-                setTimeout(()=>{
-                    if(player) player.powerUp=null;
-                }, 5000)
+                if(powerUp.type==='machineGun'){
+                    player.activateMachineGun();
+                }
+                else if(powerUp.type==='shield'){
+                    player.activateShield();
+                }
 
                 break;
             }
@@ -592,7 +611,18 @@ function animate(){
                 rectangle2:player
             }) && !game.over)
             {
-                endGame();
+                if(player.shieldActive && player.shieldTimer>0){
+                    grid.invaders.splice(i,1);
+
+                    createParticles({
+                        object:invader,
+                        fades:true,
+                        color:'cyan'
+                    });
+                }
+                else{
+                    endGame();
+                }
             }
         }
     })
