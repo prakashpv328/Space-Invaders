@@ -1,26 +1,26 @@
     class Grid{
-        constructor(){
+        constructor(config={}){
             this.position={
                 x:0,
                 y:0
             }
 
+            
+            
+            // const columns=Math.floor(Math.random() * (config.columns.max-config.columns.min+1)+config.columns.min);
+            // const rows=Math.floor(Math.random() * (config.rows.max-config.rows.min+1)+config.rows.min);
+            const rows = config.rows || Math.floor(Math.random() * (6-2+1)+2);
+            const columns = config.columns || Math.floor(Math.random() * (10-5+1)+5);
+            const speed=config.speed || 3;
+
             this.velocity={
-                x:3,
+                x:speed,
                 y:0
             }
-
+            
             this.invaders=[];
 
             const spaceX=50;
-
-            const minRow=2;
-            const maxRow=6;
-            const minCol=5;
-            const maxCol=10;
-
-            const columns=Math.floor(Math.random() * (maxCol-minCol+1)+minCol);
-            const rows=Math.floor(Math.random() * (maxRow-minRow+1)+minRow);
 
             this.width=columns*spaceX;
 

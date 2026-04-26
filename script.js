@@ -64,31 +64,45 @@ let levelSystem={
 
 const LEVEL_CONFIG={
     1:{
+        rows:3,
+        columns:5,
+        enemySpeed:3,
         shootingFrequency:100,
         bonusPoints:500,
-        totalGroups:1
+        totalGroups:5
     },
     2:{
+        rows:4,
+        columns:6,
+        enemySpeed:3.5,
         shootingFrequency:80,
         bonusPoints:750,
-        totalGroups:1
+        totalGroups:5
     },
     3:{
+        rows:5,
+        columns:7,
+        enemySpeed:4,
         shootingFrequency:60,
         bonusPoints:1000,
-        totalGroups:1
+        totalGroups:5
     },
     4:{
+        rows:5,
+        columns:8,
+        enemySpeed:4.5,
         shootingFrequency:50,
         bonusPoints:1500,
-        totalGroups:1
+        totalGroups:5
     },
     5:{
+        rows:6,
+        columns:8,
+        enemySpeed:5,
         shootingFrequency:40,
         bonusPoints:2000,
-        totalGroups:1
+        totalGroups:5
     }
-
 }
 
 let game={
@@ -425,38 +439,23 @@ function drawLevelTransition(bonusPoints){
 
 }
 
-// function drawVictoryScreen(){
-
-//     c.fillStyle = 'rgba(0, 0, 0, 0.9)';
-//     c.fillRect(0, 0, canvas.width, canvas.height);
-    
-//     c.shadowColor = '#FFD700';
-//     c.shadowBlur = 20;
-//     c.fillStyle = '#FFD700';
-//     c.font = 'bold 80px Arial';
-//     c.textAlign = 'center';
-//     c.fillText('🎉 VICTORY! 🎉', canvas.width / 2, canvas.height / 2 - 100);
-
-//     c.shadowBlur = 0;
-    
-//     c.fillStyle = 'white';
-//     c.font = 'bold 40px Arial';
-//     c.fillText('All 5 Levels Completed!', canvas.width / 2, canvas.height / 2 - 20);
-    
-//     c.fillStyle = '#FFD700';
-//     c.font = 'bold 50px Arial';
-//     c.fillText('Final Score: ' + score, canvas.width / 2, canvas.height / 2 + 40);
-    
-//     c.fillStyle = '#CCCCCC';
-//     c.font = '28px Arial';
-//     c.fillText('You are a true Space Defender!', canvas.width / 2, canvas.height / 2 + 100);
-// }
-
 function drawLevelIndicator() {
     c.fillStyle = 'white';
     c.font = 'bold 24px Arial';
     c.textAlign = 'right';
     c.fillText('Level ' + levelSystem.currentLevel , canvas.width - 20, 30);
+}
+
+function spawnLevelGrid(){
+    const config=LEVEL_CONFIG[levelSystem.currentLevel];
+
+    const grid=new Grid({
+        rows:config.rows,
+        columns:config.columns,
+        speed:config.enemySpeed
+    });
+
+    grids.push(grid);
 }
 
 
@@ -993,7 +992,7 @@ function animate(){
         if(!levelSystem.showingTransition && nowTime>=nextGridSpawnTime){
  
             if(grids.length === 0 && levelSystem.groupsCleared < levelSystem.totalGroupsForLevel) {
-                grids.push(new Grid());
+                spawnLevelGrid();
                 
                 spawnBufferMs=Math.max(MIN_GRID_GAP_MS,spawnBufferMs-50);
                 const delay=Math.max(
@@ -1080,17 +1079,6 @@ function animate(){
     frames++;
     requestAnimationFrame(animate);
 }
-
-
-// document.querySelector('#startButton').addEventListener("click",()=>{
-//     audio.backgroundMusic.play();
-//     audio.start.play();
-
-//     document.querySelector('#startScreen').style.display="none";
-//     document.querySelector("#scoreContainer").style.display="block";
-//     init();
-//     animate();
-
 
 addEventListener("keydown",({key})=>{
 
