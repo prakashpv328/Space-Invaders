@@ -63,17 +63,20 @@ let msPrev=window.performance.now();
 
 const BULLET_SPEED={
     red:-8.5,
-    yellow:-12
+    yellow:-12,
+    pink:-10
 }
 
 const FIRE_RATE={
     red:65,
-    yellow:40
+    yellow:40,
+    pink:55
 }
 
 let lastShotTime = {
     red: 0,
-    yellow: 0
+    yellow: 0,
+    pink: 0
 }
 
 let isPaused=false;
@@ -502,6 +505,7 @@ function animate(){
             rectangle1:invaderProjectile,
             rectangle2:player
         }) && !game.over){
+
             if(player.shieldActive && player.shieldTimer>0){
                 invaderProjectiles.splice(i,1);
 
@@ -562,6 +566,9 @@ function animate(){
                 }
                 else if(powerUp.type==='shield'){
                     player.activateShield();
+                }
+                else if(powerUp.type==='splitFire'){
+                    player.activateSplitFire();
                 }
 
                 break;
@@ -740,6 +747,56 @@ function animate(){
             })
         )
     }
+
+    if(
+        keys.space.pressed &&
+        player?.powerUp==='SplitFire' &&
+        player?.splitFireActive &&
+        !game.over &&
+        player?.image &&
+        now-lastShotTime.pink>=FIRE_RATE.pink
+    ){
+        lastShotTime.pink=now;
+        audio.shoot.play();
+
+        const centerX=player.position.x+player.width/2;
+        const centerY=player.position.y;
+        const speed=Math.abs(BULLET_SPEED.pink);
+
+        projectiles.push(
+            new Projectile({
+                position:{x:centerX,y:centerY},
+                velocity:{x:0,y:-speed},
+                color:'#ff1493'
+            })
+        )
+
+        const angle60=(90-70)*Math.PI/180;
+        projectiles.push(
+            new Projectile({
+                position:{x:centerX,y:centerY},
+                velocity:{
+                    x:-Math.sin(angle60)*speed,
+                    y:-Math.cos(angle60)*speed
+                },
+                color:'#ff1493'
+            })
+        );
+
+        const angle120=(120-100)*Math.PI/180;
+
+        projectiles.push(
+            new Projectile({
+                position:{x:centerX,y:centerY},
+                velocity:{
+                    x:Math.sin(angle120)*speed,
+                    y:-Math.cos(angle120)*speed
+                },
+                color:'#ff1493'
+            })
+        );
+    }
+
     frames++;
 }
 

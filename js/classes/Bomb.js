@@ -65,12 +65,22 @@ class PowerUp {
         this.velocity = velocity;
         this.radius = 15;
         
+        // Randomly assign type if not specified
         if (type === 'random') {
-            this.type = Math.random() < 0.5 ? 'machineGun' : 'shield';
+            const rand = Math.random();
+            if (rand < 0.33) {
+                this.type = 'machineGun';
+            } else if (rand < 0.66) {
+                this.type = 'shield';
+            } else {
+                this.type = 'splitFire';
+            }
+            // this.type = 'splitFire';
         } else {
             this.type = type;
         }
 
+        // Visual properties based on type
         if (this.type === 'machineGun') {
             this.color = 'yellow';
             this.glowColor = 'rgba(255, 255, 0, 0.5)';
@@ -79,6 +89,10 @@ class PowerUp {
             this.color = 'blue';
             this.glowColor = 'rgba(0, 170, 255, 0.5)';
             this.particleColor = 'cyan';
+        } else if (this.type === 'splitFire') {
+            this.color = '#ff1493'; // Deep pink
+            this.glowColor = 'rgba(255, 20, 147, 0.5)';
+            this.particleColor = '#ff69b4'; // Hot pink
         }
 
         this.pulse = 0;
@@ -87,9 +101,11 @@ class PowerUp {
     draw() {
         c.save();
 
+        // Pulsing animation
         this.pulse += 0.1;
         const pulseSize = Math.sin(this.pulse) * 3;
 
+        // Outer glow
         const gradient = c.createRadialGradient(
             this.position.x, this.position.y, this.radius - 5,
             this.position.x, this.position.y, this.radius + 10 + pulseSize
@@ -103,16 +119,19 @@ class PowerUp {
         c.fillStyle = gradient;
         c.fill();
 
+        // Main ball
         c.beginPath();
         c.arc(this.position.x, this.position.y, this.radius + pulseSize, 0, Math.PI * 2);
         c.fillStyle = this.color;
         c.fill();
 
+        // Bright center
         c.beginPath();
         c.arc(this.position.x, this.position.y, (this.radius + pulseSize) * 0.5, 0, Math.PI * 2);
         c.fillStyle = 'rgba(255, 255, 255, 0.8)';
         c.fill();
 
+        // Symbol in center
         c.fillStyle = 'rgba(0, 0, 0, 0.7)';
         c.font = 'bold 14px Arial';
         c.textAlign = 'center';
@@ -122,6 +141,8 @@ class PowerUp {
             c.fillText('⚡', this.position.x, this.position.y);
         } else if (this.type === 'shield') {
             c.fillText('🛡', this.position.x, this.position.y);
+        } else if (this.type === 'splitFire') {
+            c.fillText('⚔', this.position.x, this.position.y);
         }
 
         c.restore();

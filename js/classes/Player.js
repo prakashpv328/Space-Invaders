@@ -7,6 +7,8 @@ class Player{
         this.shieldActive=false;
         this.shieldTimer=0;
         this.shieldPulse=0;
+        this.splitFireActive=false;
+        this.splitFireTimer=0;
 
 
         const image=new Image();
@@ -43,6 +45,13 @@ class Player{
     activateMachineGun(){
         this.powerUp='MachineGun';
         this.powerUpTimer=60*8;
+        audio.bonus.play();
+    }
+
+    activateSplitFire(){
+        this.powerUp='SplitFire';
+        this.splitFireActive=true;
+        this.splitFireTimer=60*8;
         audio.bonus.play();
     }
 
@@ -125,6 +134,14 @@ class Player{
                 if(this.shieldTimer<=0){
                     this.shieldActive=false;
                     this.shieldTimer=0;
+                }
+            }
+
+            if(this.splitFireActive && this.splitFireTimer>0){
+                this.splitFireTimer--;
+                if(this.splitFireTimer<=0){
+                    this.splitFireActive=false;
+                    this.splitFireTimer=0;
                 }
             }
         }
