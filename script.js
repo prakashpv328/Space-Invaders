@@ -52,6 +52,45 @@ let keys={
     space:{pressed:false}
 }
 
+let levelSystem={
+    currentLevel:1,
+    maxLevel:5,
+    levelComplete:false,
+    showingTransition:false,
+    allLevelsComplete:false,
+    groupsCleared:0,
+    totalGroupsForLevel:0
+}
+
+const LEVEL_CONFIG={
+    1:{
+        shootingFrequency:100,
+        bonusPoints:500,
+        totalGroups:1
+    },
+    2:{
+        shootingFrequency:80,
+        bonusPoints:750,
+        totalGroups:1
+    },
+    3:{
+        shootingFrequency:60,
+        bonusPoints:1000,
+        totalGroups:1
+    },
+    4:{
+        shootingFrequency:50,
+        bonusPoints:1500,
+        totalGroups:1
+    },
+    5:{
+        shootingFrequency:40,
+        bonusPoints:2000,
+        totalGroups:1
+    }
+
+}
+
 let game={
     over:false,
     active:true
@@ -202,6 +241,12 @@ applySoundSetting(tempSoundEnabled);
 function updateGridBounds(grid,gridindex){
     if(grid.invaders.length===0){
         grids.splice(gridindex,1);
+
+        if(grids.length===0 && !levelSystem.showingTransition){
+            levelSystem.groupsCleared++;
+            checkLevelCompletion();
+        }
+
         return;
     }
 
@@ -215,6 +260,205 @@ function updateGridBounds(grid,gridindex){
     grid.width=lastInvader.position.x-firstInvader.position.x+lastInvader.width;
     grid.position.x=firstInvader.position.x;
 }
+
+function checkLevelCompletion(){
+    const allgroupsCleared=levelSystem.groupsCleared>=levelSystem.totalGroupsForLevel;
+
+    if(allgroupsCleared && !levelSystem.levelComplete && !levelSystem.showingTransition){
+        levelSystem.levelComplete=true;
+        showLevelTransition();
+    }
+}
+
+function showLevelTransition(){
+    if(levelSystem.showingTransition) return;
+
+    levelSystem.showingTransition=true;
+
+    const config=LEVEL_CONFIG[levelSystem.currentLevel];
+    const bonusPoints=config.bonusPoints;
+
+    score+=bonusPoints;
+    scoreEl.innerHTML=score;
+
+    audio.bonus.play();
+
+    if(levelSystem.currentLevel>=levelSystem.maxLevel){
+        showVictoryScreen();
+        return;
+    }
+
+    const transitionEndTime=performance.now()+3000;
+
+    function showTransition(){
+        if(!game.active) return;
+
+        const now=performance.now();
+        const timeLeft=transitionEndTime-now;
+
+        if(timeLeft>0){
+            c.fillStyle="black";
+            c.fillRect(0,0,canvas.width,canvas.height);
+
+            drawLevelTransition(bonusPoints);
+
+            requestAnimationFrame(showTransition);
+
+        }
+        else{
+            levelSystem.currentLevel++;
+            levelSystem.levelComplete=false;
+            levelSystem.showingTransition=false;
+            levelSystem.groupsCleared=0;
+            levelSystem.totalGroupsForLevel=LEVEL_CONFIG[levelSystem.currentLevel].totalGroups;
+
+            grids=[];
+            invaderProjectiles=[];
+            projectiles=[];
+            bombs=[];
+            powerUps=[];
+
+            const now=performance.now();
+            nextGridSpawnTime=now+1000;
+
+            animate();
+        }
+    }
+    showTransition();
+}
+
+function showVictoryScreen(){
+    if(levelSystem.allLevelsComplete) return;
+
+    levelSystem.allLevelsComplete = true;
+
+    game.active = false;
+    pauseToggleBtn.style.display = "none";
+
+    if(powerUpTimersContainer)
+        powerUpTimersContainer.style.display = "none";
+
+    const victoryRestartScreen = document.createElement('div');
+    victoryRestartScreen.id = 'victoryRestartScreen';
+
+    victoryRestartScreen.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.9);
+        z-index: 1000;
+    `;
+
+    victoryRestartScreen.innerHTML = `
+                <h1 style="color: #FFD700; font-size: 4rem; margin-bottom: 20px; text-shadow: 0 0 20px #FFD700;">
+                    🎉 VICTORY! 🎉
+                </h1>
+                <p style="color: white; font-size: 2rem; margin-bottom: 30px;">
+                    All Levels Completed!
+                </p>
+                <p style="color: #FFD700; font-size: 2.5rem; margin-bottom: 40px;">
+                    Final Score: ${score}
+                </p>
+                <button id="victoryPlayAgain" style="
+                    padding: 15px 40px;
+                    font-size: 1.5rem;
+                    background: linear-gradient(45deg, #FFD700, #FFA500);
+                    border: none;
+                    border-radius: 10px;
+                    color: black;
+                    cursor: pointer;
+                    margin: 10px;
+                    font-weight: bold;
+                ">Play Again</button>
+                <button id="victoryBackToLobby" style="
+                    padding: 15px 40px;
+                    font-size: 1.5rem;
+                    background: rgba(255, 255, 255, 0.2);
+                    border: 2px solid white;
+                    border-radius: 10px;
+                    color: white;
+                    cursor: pointer;
+                    margin: 10px;
+                ">Main Menu</button>
+            `;
+
+    document.body.appendChild(victoryRestartScreen);
+
+    document.getElementById('victoryPlayAgain').onclick = () => {
+        victoryRestartScreen.remove();
+        restartGame();
+    };
+
+    document.getElementById('victoryBackToLobby').onclick = () => {
+        victoryRestartScreen.remove();
+        goToLobby();
+    };
+}
+
+function drawLevelTransition(bonusPoints){
+
+    c.fillStyle = 'rgba(0, 0, 0, 0.85)';
+    c.fillRect(0, 0, canvas.width, canvas.height);
+    
+    c.fillStyle = '#FFD700';
+    c.font = 'bold 60px Arial';
+    c.textAlign = 'center';
+    c.fillText('LEVEL ' + levelSystem.currentLevel + ' COMPLETE!', canvas.width / 2, canvas.height / 2 - 80);
+
+    c.fillStyle = '#00FF00';
+    c.font = 'bold 40px Arial';
+    c.fillText('BONUS: +' + bonusPoints + ' POINTS', canvas.width / 2, canvas.height / 2 + 20);
+    
+    const nextLevel = levelSystem.currentLevel + 1;
+    const nextConfig = LEVEL_CONFIG[nextLevel];
+    if (nextConfig) {
+        c.font = '24px Arial';
+        c.fillStyle = '#CCCCCC';
+        c.fillText(nextConfig.totalGroups + ' groups of enemies incoming...', canvas.width / 2, canvas.height / 2 + 105);
+    }
+
+}
+
+// function drawVictoryScreen(){
+
+//     c.fillStyle = 'rgba(0, 0, 0, 0.9)';
+//     c.fillRect(0, 0, canvas.width, canvas.height);
+    
+//     c.shadowColor = '#FFD700';
+//     c.shadowBlur = 20;
+//     c.fillStyle = '#FFD700';
+//     c.font = 'bold 80px Arial';
+//     c.textAlign = 'center';
+//     c.fillText('🎉 VICTORY! 🎉', canvas.width / 2, canvas.height / 2 - 100);
+
+//     c.shadowBlur = 0;
+    
+//     c.fillStyle = 'white';
+//     c.font = 'bold 40px Arial';
+//     c.fillText('All 5 Levels Completed!', canvas.width / 2, canvas.height / 2 - 20);
+    
+//     c.fillStyle = '#FFD700';
+//     c.font = 'bold 50px Arial';
+//     c.fillText('Final Score: ' + score, canvas.width / 2, canvas.height / 2 + 40);
+    
+//     c.fillStyle = '#CCCCCC';
+//     c.font = '28px Arial';
+//     c.fillText('You are a true Space Defender!', canvas.width / 2, canvas.height / 2 + 100);
+// }
+
+function drawLevelIndicator() {
+    c.fillStyle = 'white';
+    c.font = 'bold 24px Arial';
+    c.textAlign = 'right';
+    c.fillText('Level ' + levelSystem.currentLevel , canvas.width - 20, 30);
+}
+
 
 function startGame(){
     audio.backgroundMusic.play();
@@ -285,7 +529,7 @@ function syncPauseIcon(){
 }
 
 function pauseGame(){
-    if(!game.active || game.over || isPaused) return;
+    if(!game.active || game.over || isPaused || levelSystem.showingTransition) return;
 
     isPaused=true;
     audio.backgroundMusic.pause();
@@ -321,6 +565,16 @@ function init(){
     hitLabels=[];
     scoreEl.innerHTML=score;
 
+    levelSystem={
+        currentLevel:1,
+        maxLevel:5,
+        levelComplete:false,
+        showingTransition:false,
+        allLevelsComplete:false,
+        groupsCleared:0,
+        totalGroupsForLevel:LEVEL_CONFIG[1].totalGroups
+    }
+
     keys={
         left:{pressed:false},
         right:{pressed:false},
@@ -331,7 +585,9 @@ function init(){
     frames=0;
     spawnBufferMs=2200;
     const now=performance.now();
-    nextGridSpawnTime=now+(Math.random()*800+1400);
+
+    //invaders span
+    nextGridSpawnTime=now+1000;
 
     game={
         over:false,
@@ -409,9 +665,16 @@ function animate(){
     }
     msPrev=msNow-(elapsed % fpsInterval);
 
+    if(levelSystem.showingTransition) {
+        requestAnimationFrame(animate);
+        return;
+    }
+
 
     c.fillStyle="black";
     c.fillRect(0,0,canvas.width,canvas.height);
+
+    drawLevelIndicator();
 
     updatePowerUpTimers();
 
@@ -606,7 +869,10 @@ function animate(){
     grids.forEach((grid,gridindex)=>{
         grid.update();
 
-        if (frames % 100 === 0 && grid.invaders.length > 0) {
+        const config = LEVEL_CONFIG[levelSystem.currentLevel];
+        const shootingFrequency = config.shootingFrequency;
+
+        if (frames % shootingFrequency === 0 && grid.invaders.length > 0) {
             const randomInvader =
                 grid.invaders[Math.floor(Math.random() * grid.invaders.length)]
             randomInvader.shoot(invaderProjectiles)
@@ -724,23 +990,19 @@ function animate(){
 
     const nowTime=performance.now();
 
-    if(nowTime>=nextGridSpawnTime){
-
-        const topBusy=grids.some(grid=>grid.position.y<60);
-
-        if(topBusy){
-            nextGridSpawnTime=nowTime+250
+        if(!levelSystem.showingTransition && nowTime>=nextGridSpawnTime){
+ 
+            if(grids.length === 0 && levelSystem.groupsCleared < levelSystem.totalGroupsForLevel) {
+                grids.push(new Grid());
+                
+                spawnBufferMs=Math.max(MIN_GRID_GAP_MS,spawnBufferMs-50);
+                const delay=Math.max(
+                    MIN_GRID_GAP_MS,
+                    spawnBufferMs+Math.random()*700
+                );
+                nextGridSpawnTime=nowTime+delay;
+            }
         }
-        else{
-            grids.push(new Grid());
-            spawnBufferMs=Math.max(MIN_GRID_GAP_MS,spawnBufferMs-120);
-            const delay=Math.max(
-                MIN_GRID_GAP_MS,
-                spawnBufferMs+Math.random()*700
-            );
-            nextGridSpawnTime=nowTime+delay;
-        }
-    }
 
     const now = performance.now()
 
@@ -816,6 +1078,7 @@ function animate(){
     }
 
     frames++;
+    requestAnimationFrame(animate);
 }
 
 
@@ -885,6 +1148,7 @@ addEventListener("keydown",({key})=>{
             const now = performance.now()
 
             if(player?.powerUp === 'MachineGun') return;
+            if(player?.powerUp === 'SplitFire' && player?.splitFireActive) return;
 
             if(player?.image && now - lastShotTime.red >= FIRE_RATE.red)
             {
