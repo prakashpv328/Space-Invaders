@@ -21,12 +21,17 @@ const pauseToggleIcon=document.querySelector('#pauseToggleIcon');
 const soundOptions=document.querySelectorAll('.soundOption');
 
 const powerUpTimersContainer=document.querySelector('#powerUpTimers');
+
 const shieldTimerEl=document.querySelector('#shieldTimer');
 const machineGunTimerEl=document.querySelector('#machineGunTimer');
+const splitFireTimerEl=document.querySelector('#splitFireTimer');
+
 const shieldTimerBar=shieldTimerEl?.querySelector('.timerFill');
 const shieldTimerText=shieldTimerEl?.querySelector('.timerText');
 const machineGunTimerBar=machineGunTimerEl?.querySelector('.timerFill');
 const machineGunTimerText=machineGunTimerEl?.querySelector('.timerText');
+const splitFireTimerBar=splitFireTimerEl?.querySelector('.timerFill');
+const splitFireTimerText=splitFireTimerEl?.querySelector('.timerText');
 
 const GAME_WIDTH=1250;
 const GAME_HEIGHT=700;
@@ -89,7 +94,7 @@ let tempSoundEnabled=storedSoundEnabled===null?true:storedSoundEnabled==='true';
 function updatePowerUpTimers(){
     if(!player) return;
 
-    const MAX_TIMER=60*8;
+    const MAX_TIMER=60*6;
 
     if(player.shieldActive && player.shieldTimer>0){
         const remainingSeconds=Math.ceil(player.shieldTimer/60);
@@ -97,7 +102,7 @@ function updatePowerUpTimers(){
 
         shieldTimerEl?.classList.remove('hidden');
         if(shieldTimerBar) shieldTimerBar.style.width=`${percentage}%`;
-        if(shieldTimerText) shieldTimerText.textContent=`Shield: ${remainingSeconds}s`;
+        if(shieldTimerText) shieldTimerText.textContent=`${remainingSeconds}s`;
     }
     else{
         shieldTimerEl?.classList.add('hidden');
@@ -110,13 +115,26 @@ function updatePowerUpTimers(){
         
         machineGunTimerEl?.classList.remove('hidden');
         if (machineGunTimerBar) machineGunTimerBar.style.width = `${percentage}%`;
-        if (machineGunTimerText) machineGunTimerText.textContent = `${remainingSeconds}s`;
+        if (machineGunTimerText) machineGunTimerText.textContent=`${remainingSeconds}s`;
     } else {
         machineGunTimerEl?.classList.add('hidden');
     }
 
+    if(player.powerUp==='SplitFire' && player.splitFireActive && player.splitFireTimer>0){
+        const remainingSeconds=Math.ceil(player.splitFireTimer/60);
+        const percentage=(player.splitFireTimer/MAX_TIMER)*100;
+
+        splitFireTimerEl?.classList.remove('hidden');
+        if(splitFireTimerBar) splitFireTimerBar.style.width=`${percentage}%`;
+        if(splitFireTimerText) splitFireTimerText.textContent=`${remainingSeconds}s`;
+    }
+    else{
+        splitFireTimerEl?.classList.add('hidden');
+    }
+
     const anyTimerActive = (player.shieldActive && player.shieldTimer > 0) || 
-                          (player.powerUp === 'MachineGun' && player.powerUpTimer > 0);
+                          (player.powerUp === 'MachineGun' && player.powerUpTimer > 0) ||
+                          (player.powerUp === 'SplitFire' && player.splitFireTimer > 0);
     
     if (powerUpTimersContainer) {
         powerUpTimersContainer.style.display = anyTimerActive ? 'flex' : 'none';
@@ -416,7 +434,7 @@ function animate(){
         }
     }
 
-    if(frames%500===0){
+    if(frames%800===0){
         powerUps.push(
             new PowerUp({
                 position:{

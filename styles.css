@@ -94,6 +94,11 @@ canvas{
   background: linear-gradient(90deg, #ffcc00, #ffee44);
   box-shadow: 0 0 clamp(4px,0.5vw,8px) rgba(255, 204, 0, 0.6);
 }
+
+.timerFill.splitFire {
+  background: linear-gradient(90deg, #ff66cc, #ff99dd);
+  box-shadow: 0 0 clamp(4px,0.5vw,8px) rgba(255, 102, 204, 0.6);
+}
  
 .timerText {
   font-size: clamp(10px,1vw,13px);

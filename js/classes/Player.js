@@ -37,21 +37,21 @@ class Player{
 
     activateShield(){
         this.shieldActive=true;
-        this.shieldTimer=60*8;
+        this.shieldTimer=60*6;
         this.shieldPulse=0;
         audio.bonus.play();
     }
  
     activateMachineGun(){
         this.powerUp='MachineGun';
-        this.powerUpTimer=60*8;
+        this.powerUpTimer=60*6;
         audio.bonus.play();
     }
 
     activateSplitFire(){
         this.powerUp='SplitFire';
         this.splitFireActive=true;
-        this.splitFireTimer=60*8;
+        this.splitFireTimer=60*6;
         audio.bonus.play();
     }
 
