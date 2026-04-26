@@ -13,6 +13,24 @@
               <span>Score:</span> <span id="scoreEl">0</span>
             </p>
 
+            <div id="powerUpTimers">
+                <div id="shieldTimer" class="powerUpTimer hidden">
+                    <div class="timerIcon">🛡</div>
+                    <div class="timerBar">
+                        <div class="timerFill shield"></div>
+                    </div>
+                    <span class="timerText">0s</span>
+                </div>
+                
+                <div id="machineGunTimer" class="powerUpTimer hidden">
+                    <div class="timerIcon">⚡</div>
+                    <div class="timerBar">
+                        <div class="timerFill machineGun"></div>
+                    </div>
+                    <span class="timerText">0s</span>
+                </div>
+            </div>
+
             <button id="pauseToggleBtn" type="button" aria-label="pause or Play">
                 <img id="pauseToggleIcon" src="./img/components/pause.png" alt="Pause">
             </button>

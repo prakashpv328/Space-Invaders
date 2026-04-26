@@ -20,6 +20,14 @@ const pauseToggleIcon=document.querySelector('#pauseToggleIcon');
 
 const soundOptions=document.querySelectorAll('.soundOption');
 
+const powerUpTimersContainer=document.querySelector('#powerUpTimers');
+const shieldTimerEl=document.querySelector('#shieldTimer');
+const machineGunTimerEl=document.querySelector('#machineGunTimer');
+const shieldTimerBar=shieldTimerEl?.querySelector('.timerFill');
+const shieldTimerText=shieldTimerEl?.querySelector('.timerText');
+const machineGunTimerBar=machineGunTimerEl?.querySelector('.timerFill');
+const machineGunTimerText=machineGunTimerEl?.querySelector('.timerText');
+
 const GAME_WIDTH=1250;
 const GAME_HEIGHT=700;
 
@@ -75,6 +83,43 @@ let tempSelectedShip = localStorage.getItem('selectedShip') || './img/spaceships
 const storedSoundEnabled=localStorage.getItem('soundEnabled');
 let tempSoundEnabled=storedSoundEnabled===null?true:storedSoundEnabled==='true';
 
+function updatePowerUpTimers(){
+    if(!player) return;
+
+    const MAX_TIMER=60*8;
+
+    if(player.shieldActive && player.shieldTimer>0){
+        const remainingSeconds=Math.ceil(player.shieldTimer/60);
+        const percentage=(player.shieldTimer/MAX_TIMER)*100;
+
+        shieldTimerEl?.classList.remove('hidden');
+        if(shieldTimerBar) shieldTimerBar.style.width=`${percentage}%`;
+        if(shieldTimerText) shieldTimerText.textContent=`Shield: ${remainingSeconds}s`;
+    }
+    else{
+        shieldTimerEl?.classList.add('hidden');
+    }
+
+
+    if (player.powerUp === 'MachineGun' && player.powerUpTimer > 0) {
+        const remainingSeconds=Math.ceil(player.powerUpTimer / 60);
+        const percentage=(player.powerUpTimer / MAX_TIMER) * 100;
+        
+        machineGunTimerEl?.classList.remove('hidden');
+        if (machineGunTimerBar) machineGunTimerBar.style.width = `${percentage}%`;
+        if (machineGunTimerText) machineGunTimerText.textContent = `${remainingSeconds}s`;
+    } else {
+        machineGunTimerEl?.classList.add('hidden');
+    }
+
+    const anyTimerActive = (player.shieldActive && player.shieldTimer > 0) || 
+                          (player.powerUp === 'MachineGun' && player.powerUpTimer > 0);
+    
+    if (powerUpTimersContainer) {
+        powerUpTimersContainer.style.display = anyTimerActive ? 'flex' : 'none';
+    }
+
+}
 
 function markSelected(shipPath) {
     shipOptions.forEach(btn => {
@@ -193,6 +238,9 @@ function goToLobby(){
     startScreen.style.display="flex";
     pauseToggleBtn.style.display="none";
 
+    if(powerUpTimersContainer)
+        powerUpTimersContainer.style.display="none";
+
     syncPauseIcon();
 }
 
@@ -297,6 +345,10 @@ function endGame(){
     game.over=true;
     isPaused=false;
     pauseToggleBtn.style.display="none";
+
+    if(powerUpTimersContainer)
+        powerUpTimersContainer.style.display="none";
+
     syncPauseIcon();
 
     setTimeout(()=>{
@@ -339,6 +391,8 @@ function animate(){
 
     c.fillStyle="black";
     c.fillRect(0,0,canvas.width,canvas.height);
+
+    updatePowerUpTimers();
 
     for(let i=hitLabels.length-1;i>=0;i--){
         const l=hitLabels[i];

@@ -2,12 +2,12 @@ class InvaderProjectile{
     constructor({position,velocity}){
         this.position=position;
         this.velocity=velocity;
-        this.width=3;
-        this.height=10;
+        this.width=4;
+        this.height=12;
     }
 
     draw(){
-        c.fillStyle="white";
+        c.fillStyle="red";
         c.fillRect(this.position.x,this.position.y,this.width,this.height)
     }
 
