@@ -58,6 +58,7 @@ let levelSystem={
     levelComplete:false,
     showingTransition:false,
     allLevelsComplete:false,
+    groupsSpawned:0,
     groupsCleared:0,
     totalGroupsForLevel:0
 }
@@ -256,7 +257,7 @@ function updateGridBounds(grid,gridindex){
     if(grid.invaders.length===0){
         grids.splice(gridindex,1);
 
-        if(grids.length===0 && !levelSystem.showingTransition){
+        if(grids.length===0 || gridindex < grids.length){
             levelSystem.groupsCleared++;
             checkLevelCompletion();
         }
@@ -323,6 +324,7 @@ function showLevelTransition(){
             levelSystem.currentLevel++;
             levelSystem.levelComplete=false;
             levelSystem.showingTransition=false;
+            levelSystem.groupsSpawned=0;
             levelSystem.groupsCleared=0;
             levelSystem.totalGroupsForLevel=LEVEL_CONFIG[levelSystem.currentLevel].totalGroups;
 
@@ -334,8 +336,6 @@ function showLevelTransition(){
 
             const now=performance.now();
             nextGridSpawnTime=now+1000;
-
-            animate();
         }
     }
     showTransition();
@@ -456,6 +456,7 @@ function spawnLevelGrid(){
     });
 
     grids.push(grid);
+    levelSystem.groupsSpawned++
 }
 
 
@@ -570,6 +571,7 @@ function init(){
         levelComplete:false,
         showingTransition:false,
         allLevelsComplete:false,
+        groupsSpawned:0,
         groupsCleared:0,
         totalGroupsForLevel:LEVEL_CONFIG[1].totalGroups
     }
@@ -990,17 +992,25 @@ function animate(){
     const nowTime=performance.now();
 
         if(!levelSystem.showingTransition && nowTime>=nextGridSpawnTime){
- 
-            if(grids.length === 0 && levelSystem.groupsCleared < levelSystem.totalGroupsForLevel) {
-                spawnLevelGrid();
-                
-                spawnBufferMs=Math.max(MIN_GRID_GAP_MS,spawnBufferMs-50);
-                const delay=Math.max(
-                    MIN_GRID_GAP_MS,
-                    spawnBufferMs+Math.random()*700
-                );
-                nextGridSpawnTime=nowTime+delay;
+
+            const topBusy=grids.some(grid=>grid.position.y<60);
+
+            if(topBusy){
+                nextGridSpawnTime=nowTime+250;
             }
+            else{
+                if(levelSystem.groupsSpawned < levelSystem.totalGroupsForLevel) {
+                    spawnLevelGrid();
+                    
+                    spawnBufferMs=Math.max(MIN_GRID_GAP_MS,spawnBufferMs-50);
+                    const delay=Math.max(
+                        MIN_GRID_GAP_MS,
+                        spawnBufferMs+Math.random()*700
+                    );
+                    nextGridSpawnTime=nowTime+delay;
+                }
+            }
+ 
         }
 
     const now = performance.now()
