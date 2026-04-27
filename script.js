@@ -45,12 +45,12 @@ const SOUND_ON_ICON="./img/components/sound_on.png";
 const SOUND_OFF_ICON="./img/components/sound_off.png";
 
 const HIGH_SCORE_KEY='spaceInvadersHighScore';
-let highScore=Number(localStorage.getItem(HIGH_SCORE_KEY)) || 0;
+let highScore = Number(localStorage.getItem(HIGH_SCORE_KEY)) || 0;
 
 
 
-const GAME_WIDTH=1250;
-const GAME_HEIGHT=700;
+const GAME_WIDTH = 1250;
+const GAME_HEIGHT = 700;
 
 let player=null;
 let particles=[];
