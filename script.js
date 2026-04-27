@@ -33,6 +33,11 @@ const machineGunTimerText=machineGunTimerEl?.querySelector('.timerText');
 const splitFireTimerBar=splitFireTimerEl?.querySelector('.timerFill');
 const splitFireTimerText=splitFireTimerEl?.querySelector('.timerText');
 
+const victoryScreen=document.querySelector('#victoryScreen');
+const victoryScoreEl=document.querySelector('#victoryScoreEl');
+const victoryPlayAgainBtn=document.querySelector('#victoryPlayAgain');
+const victoryBackToLobbyBtn=document.querySelector('#victoryBackToLobby');
+
 const HIGH_SCORE_KEY='spaceInvadersHighScore';
 let highScore=Number(localStorage.getItem(HIGH_SCORE_KEY)) || 0;
 
@@ -99,7 +104,7 @@ const LEVEL_CONFIG={
         enemySpeed:4.5,
         shootingFrequency:50,
         bonusPoints:1500,
-        totalGroups:5
+        totalGroups:6
     },
     5:{
         rows:6,
@@ -107,7 +112,7 @@ const LEVEL_CONFIG={
         enemySpeed:5,
         shootingFrequency:40,
         bonusPoints:2000,
-        totalGroups:5
+        totalGroups:6
     }
 }
 
@@ -117,7 +122,7 @@ let game={
 }
 
 let frames=0;
-let spawnBufferms=2200;
+let spawnBufferMs=2200;
 let nextGridSpawnTime=0;
 const MIN_GRID_GAP_MS=1200;
 
@@ -245,6 +250,18 @@ settingsPopup?.addEventListener('click', (e) => {
     if (e.target === settingsPopup) settingsPopup.classList.add('hidden');
 });
 
+document.querySelector('#victoryPlayAgain')?.addEventListener('click', () => {
+    const victoryScreen = document.querySelector('#victoryScreen');
+    if(victoryScreen) victoryScreen.style.display = "none";
+    restartGame();
+});
+
+document.querySelector('#victoryBackToLobby')?.addEventListener('click', () => {
+    const victoryScreen = document.querySelector('#victoryScreen');
+    if(victoryScreen) victoryScreen.style.display = "none";
+    goToLobby();
+});
+
 function markSoundSelected(isEnabled){
     soundOptions.forEach(btn=>{
         const isOnButton=btn.dataset.sound==='on';
@@ -349,75 +366,28 @@ function showLevelTransition(){
 function showVictoryScreen(){
     if(levelSystem.allLevelsComplete) return;
 
+    const prevHighScore = highScore;
+    updateHighScore();
+    const isNewHighScore = score > prevHighScore;
+
     levelSystem.allLevelsComplete = true;
-
     game.active = false;
+    isPaused = false;
+
     pauseToggleBtn.style.display = "none";
+    if (powerUpTimersContainer) powerUpTimersContainer.style.display = "none";
+    scoreContainer.style.display = "none";
 
-    if(powerUpTimersContainer)
-        powerUpTimersContainer.style.display = "none";
+    if (victoryScoreEl) victoryScoreEl.textContent = score;
 
-    const victoryRestartScreen = document.createElement('div');
-    victoryRestartScreen.id = 'victoryRestartScreen';
+    const victorySub = document.querySelector('#victoryScreen .victorySub');
+    if (victorySub) {
+        victorySub.textContent = isNewHighScore
+            ? 'All Levels Completed! 🎉 New High Score!'
+            : 'All Levels Completed!';
+    }
 
-    victoryRestartScreen.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        background: rgba(0, 0, 0, 0.9);
-        z-index: 1000;
-    `;
-
-    victoryRestartScreen.innerHTML = `
-                <h1 style="color: #FFD700; font-size: 4rem; margin-bottom: 20px; text-shadow: 0 0 20px #FFD700;">
-                    🎉 VICTORY! 🎉
-                </h1>
-                <p style="color: white; font-size: 2rem; margin-bottom: 30px;">
-                    All Levels Completed!
-                </p>
-                <p style="color: #FFD700; font-size: 2.5rem; margin-bottom: 40px;">
-                    Final Score: ${score}
-                </p>
-                <button id="victoryPlayAgain" style="
-                    padding: 15px 40px;
-                    font-size: 1.5rem;
-                    background: linear-gradient(45deg, #FFD700, #FFA500);
-                    border: none;
-                    border-radius: 10px;
-                    color: black;
-                    cursor: pointer;
-                    margin: 10px;
-                    font-weight: bold;
-                ">Play Again</button>
-                <button id="victoryBackToLobby" style="
-                    padding: 15px 40px;
-                    font-size: 1.5rem;
-                    background: rgba(255, 255, 255, 0.2);
-                    border: 2px solid white;
-                    border-radius: 10px;
-                    color: white;
-                    cursor: pointer;
-                    margin: 10px;
-                ">Main Menu</button>
-            `;
-
-    document.body.appendChild(victoryRestartScreen);
-
-    document.getElementById('victoryPlayAgain').onclick = () => {
-        victoryRestartScreen.remove();
-        restartGame();
-    };
-
-    document.getElementById('victoryBackToLobby').onclick = () => {
-        victoryRestartScreen.remove();
-        goToLobby();
-    };
+    if (victoryScreen) victoryScreen.style.display = "flex";
 }
 
 function drawLevelTransition(bonusPoints){
@@ -482,6 +452,9 @@ function startGame(){
 }
 
 function restartGame(){
+    const victoryScreen = document.querySelector('#victoryScreen');
+    if(victoryScreen) victoryScreen.style.display = "none";
+
     audio.select.play();
     audio.backgroundMusic.play();
 
@@ -500,6 +473,9 @@ function restartGame(){
 }
 
 function goToLobby(){
+    const victoryScreen = document.querySelector('#victoryScreen');
+    if(victoryScreen) victoryScreen.style.display = "none";
+
     audio.select.play();
 
     game.active=false;
@@ -647,26 +623,24 @@ function endGame(){
 
     syncPauseIcon();
 
-    const isNewHighScore=score>highScore;
-    if(isNewHighScore){
-        highScore=score;
-        localStorage.setItem(HIGH_SCORE_KEY, String(highScore));
-    }
+    const prevHighScore = highScore;
+    updateHighScore();
+    const isNewHighScore = score > prevHighScore;
 
-    setTimeout(()=>{
-        game.active=false;
-        document.querySelector("#restartScreen").style.display="flex";
+    setTimeout(() => {
+        game.active = false;
+        restartScreen.style.display = "flex";
 
-        const gameOverTitle=document.querySelector('#restartScreen .screenContent h1');
-        if(gameOverTitle){
-
+        const gameOverTitle = document.querySelector('#restartScreen .screenContent h1');
+        if (gameOverTitle) {
             gameOverTitle.innerHTML = `
-            Game Over
-            <span class="gameOverStats">Score: ${score} | High Score: ${highScore}</span>
-            ${isNewHighScore ? '<span class="newHighScoreMsg">🎉 New High Score! Amazing! 🚀</span>' : ''}
+                Game Over
+                <span class="gameOverStats">Score: ${score} | High Score: ${highScore}</span>
+                <br/>
+                ${isNewHighScore ? '<span class="newHighScoreMsg">🎉 New High Score! Amazing! 🚀</span>' : ''}
             `;
         }
-    },2000)
+    }, 2000);
 
 
     createParticles({
