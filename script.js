@@ -33,6 +33,11 @@ const machineGunTimerText=machineGunTimerEl?.querySelector('.timerText');
 const splitFireTimerBar=splitFireTimerEl?.querySelector('.timerFill');
 const splitFireTimerText=splitFireTimerEl?.querySelector('.timerText');
 
+const HIGH_SCORE_KEY='spaceInvadersHighScore';
+let highScore=Number(localStorage.getItem(HIGH_SCORE_KEY)) || 0;
+
+
+
 const GAME_WIDTH=1250;
 const GAME_HEIGHT=700;
 
@@ -480,6 +485,9 @@ function restartGame(){
     audio.select.play();
     audio.backgroundMusic.play();
 
+    const gameOverTitle=document.querySelector('#restartScreen .screenContent h1');
+    if(gameOverTitle) gameOverTitle.textContent="Game Over";
+
     restartScreen.style.display="none";
     scoreContainer.style.display="block";
     pauseToggleBtn.style.display="block";
@@ -497,6 +505,9 @@ function goToLobby(){
     game.active=false;
     game.over=false;
     isPaused=false;
+
+    const gameOverTitle=document.querySelector('#restartScreen .screenContent h1');
+    if(gameOverTitle) gameOverTitle.textContent="Game Over";
 
     restartScreen.style.display="none";
     scoreContainer.style.display="none";
@@ -613,6 +624,13 @@ function init(){
     }
 }
 
+function updateHighScore(){
+    if(score>highScore){
+        highScore=score;
+        localStorage.setItem(HIGH_SCORE_KEY,highScore);
+    }
+}
+
 function endGame(){
     if(game.over) return;
 
@@ -629,9 +647,25 @@ function endGame(){
 
     syncPauseIcon();
 
+    const isNewHighScore=score>highScore;
+    if(isNewHighScore){
+        highScore=score;
+        localStorage.setItem(HIGH_SCORE_KEY, String(highScore));
+    }
+
     setTimeout(()=>{
         game.active=false;
         document.querySelector("#restartScreen").style.display="flex";
+
+        const gameOverTitle=document.querySelector('#restartScreen .screenContent h1');
+        if(gameOverTitle){
+
+            gameOverTitle.innerHTML = `
+            Game Over
+            <span class="gameOverStats">Score: ${score} | High Score: ${highScore}</span>
+            ${isNewHighScore ? '<span class="newHighScoreMsg">🎉 New High Score! Amazing! 🚀</span>' : ''}
+            `;
+        }
     },2000)
 
 
