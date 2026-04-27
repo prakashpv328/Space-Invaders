@@ -38,6 +38,12 @@ const victoryScoreEl=document.querySelector('#victoryScoreEl');
 const victoryPlayAgainBtn=document.querySelector('#victoryPlayAgain');
 const victoryBackToLobbyBtn=document.querySelector('#victoryBackToLobby');
 
+const soundToggleBtn=document.querySelector('#soundToggleBtn');
+const soundToggleIcon=document.querySelector('#soundToggleIcon');
+
+const SOUND_ON_ICON="./img/components/sound_on.png";
+const SOUND_OFF_ICON="./img/components/sound_off.png";
+
 const HIGH_SCORE_KEY='spaceInvadersHighScore';
 let highScore=Number(localStorage.getItem(HIGH_SCORE_KEY)) || 0;
 
@@ -155,6 +161,9 @@ let tempSelectedShip = localStorage.getItem('selectedShip') || './img/spaceships
 const storedSoundEnabled=localStorage.getItem('soundEnabled');
 let tempSoundEnabled=storedSoundEnabled===null?true:storedSoundEnabled==='true';
 
+let isSoundEnabled = localStorage.getItem('soundEnabled');
+isSoundEnabled = isSoundEnabled === null ? true : isSoundEnabled === 'true';
+
 function updatePowerUpTimers(){
     if(!player) return;
 
@@ -241,7 +250,7 @@ settingsCancel?.addEventListener('click', () => {
 
 settingsSave?.addEventListener('click', () => {
     localStorage.setItem('selectedShip', tempSelectedShip);
-    localStorage.setItem('soundEnabled', tempSoundEnabled);
+    isSoundEnabled = tempSoundEnabled;
     applySoundSetting(tempSoundEnabled);
     settingsPopup?.classList.add('hidden');
 });
@@ -271,9 +280,26 @@ function markSoundSelected(isEnabled){
 
 function applySoundSetting(isEnabled){
     Howler.mute(!isEnabled);
+    localStorage.setItem('soundEnabled',String(isEnabled));
+
+    if(soundToggleIcon){
+        soundToggleIcon.src=isEnabled?SOUND_ON_ICON:SOUND_OFF_ICON;
+        soundToggleIcon.alt=isEnabled?"Sound On":"Sound Off";
+    }
+    if(soundToggleBtn){
+        soundToggleBtn.setAttribute('aria-label',isEnabled?'Sound On':'Sound Off');
+    }
+
 }
 
 applySoundSetting(tempSoundEnabled);
+
+function toggleSound(){
+    isSoundEnabled=!isSoundEnabled;
+    applySoundSetting(isSoundEnabled);
+}
+
+soundToggleBtn?.addEventListener('click',toggleSound);
 
 function updateGridBounds(grid,gridindex){
     if(grid.invaders.length===0){
@@ -375,6 +401,7 @@ function showVictoryScreen(){
     isPaused = false;
 
     pauseToggleBtn.style.display = "none";
+    soundToggleBtn.style.display="none";
     if (powerUpTimersContainer) powerUpTimersContainer.style.display = "none";
     scoreContainer.style.display = "none";
 
@@ -443,6 +470,7 @@ function startGame(){
     restartScreen.style.display="none";
     scoreContainer.style.display="block";
     pauseToggleBtn.style.display="block";
+    soundToggleBtn.style.display="block";
 
     isPaused=false;
     syncPauseIcon();
@@ -464,6 +492,7 @@ function restartGame(){
     restartScreen.style.display="none";
     scoreContainer.style.display="block";
     pauseToggleBtn.style.display="block";
+    soundToggleBtn.style.display="block";
 
     isPaused=false;
     syncPauseIcon();
@@ -489,6 +518,7 @@ function goToLobby(){
     scoreContainer.style.display="none";
     startScreen.style.display="flex";
     pauseToggleBtn.style.display="none";
+    soundToggleBtn.style.display="none";
 
     if(powerUpTimersContainer)
         powerUpTimersContainer.style.display="none";
@@ -617,6 +647,7 @@ function endGame(){
     game.over=true;
     isPaused=false;
     pauseToggleBtn.style.display="none";
+    soundToggleBtn.style.display="none";
 
     if(powerUpTimersContainer)
         powerUpTimersContainer.style.display="none";
@@ -1126,6 +1157,11 @@ addEventListener("keydown",({key})=>{
 
     if(key==='p' || key==='P'){
         togglePause();
+        return;
+    }
+
+    if(key==='s' || key==='S'){
+        toggleSound();
         return;
     }
 
