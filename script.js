@@ -70,7 +70,7 @@ let keys={
 
 let levelSystem={
     currentLevel:1,
-    maxLevel:5,
+    maxLevel:8,
     levelComplete:false,
     showingTransition:false,
     allLevelsComplete:false,
@@ -82,43 +82,67 @@ let levelSystem={
 const LEVEL_CONFIG={
     1:{
         rows:3,
-        columns:5,
+        columns:4,
         enemySpeed:3,
         shootingFrequency:100,
         bonusPoints:500,
-        totalGroups:5
+        totalGroups:1
     },
     2:{
+        rows:3,
+        columns:5,
+        enemySpeed:3,
+        shootingFrequency:95,
+        bonusPoints:750,
+        totalGroups:1
+    },
+    3:{
+        rows:4,
+        columns:5,
+        enemySpeed:3.5,
+        shootingFrequency:90,
+        bonusPoints:1000,
+        totalGroups:1
+    },
+    4:{
         rows:4,
         columns:6,
         enemySpeed:3.5,
         shootingFrequency:80,
-        bonusPoints:750,
-        totalGroups:5
-    },
-    3:{
-        rows:5,
-        columns:7,
-        enemySpeed:4,
-        shootingFrequency:60,
-        bonusPoints:1000,
-        totalGroups:5
-    },
-    4:{
-        rows:5,
-        columns:8,
-        enemySpeed:4.5,
-        shootingFrequency:50,
-        bonusPoints:1500,
-        totalGroups:6
+        bonusPoints:1250,
+        totalGroups:1
     },
     5:{
+        rows:5,
+        columns:6,
+        enemySpeed:4,
+        shootingFrequency:70,
+        bonusPoints:1500,
+        totalGroups:1
+    },
+    6:{
+        rows:5,
+        columns:7,
+        enemySpeed:4.5,
+        shootingFrequency:60,
+        bonusPoints:1750,
+        totalGroups:1
+    },
+    7:{
+        rows:6,
+        columns:7,
+        enemySpeed:5,
+        shootingFrequency:50,
+        bonusPoints:2000,
+        totalGroups:1
+    },
+    8:{
         rows:6,
         columns:8,
         enemySpeed:5,
         shootingFrequency:40,
-        bonusPoints:2000,
-        totalGroups:6
+        bonusPoints:2500,
+        totalGroups:1
     }
 }
 
@@ -129,7 +153,7 @@ let game={
 
 let frames=0;
 let spawnBufferMs=2200;
-let nextGridSpawnTime=0;
+let nextGridSpawnTime = 0;
 const MIN_GRID_GAP_MS=1200;
 
 let fps=60;
@@ -584,7 +608,7 @@ function init(){
 
     levelSystem={
         currentLevel:1,
-        maxLevel:5,
+        maxLevel:8,
         levelComplete:false,
         showingTransition:false,
         allLevelsComplete:false,
