@@ -7,10 +7,10 @@
 
             
             
-            // const columns=Math.floor(Math.random() * (config.columns.max-config.columns.min+1)+config.columns.min);
-            // const rows=Math.floor(Math.random() * (config.rows.max-config.rows.min+1)+config.rows.min);
-            const rows = config.rows || Math.floor(Math.random() * (6-2+1)+2);
-            const columns = config.columns || Math.floor(Math.random() * (10-5+1)+5);
+            const columns=Math.floor(Math.random() * (config.maxColumns-config.minColumns+1)+config.minColumns);
+            const rows=Math.floor(Math.random() * (config.maxRows-config.minRows+1)+config.minRows);
+            // const rows = config.rows || Math.floor(Math.random() * (6-2+1)+2);
+            // const columns = config.columns || Math.floor(Math.random() * (10-5+1)+5);
             const speed=config.speed || 3;
 
             this.velocity={

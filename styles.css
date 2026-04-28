@@ -585,6 +585,11 @@ canvas{
   color: #ffd700;
 }
 
+.newHighScore {
+    margin-top: 10px;
+    color: gold;
+    font-weight: bold;
+}
 
 
 

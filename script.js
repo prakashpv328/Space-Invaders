@@ -70,7 +70,7 @@ let keys={
 
 let levelSystem={
     currentLevel:1,
-    maxLevel:8,
+    maxLevel:10,
     levelComplete:false,
     showingTransition:false,
     allLevelsComplete:false,
@@ -81,69 +81,105 @@ let levelSystem={
 
 const LEVEL_CONFIG={
     1:{
-        rows:3,
-        columns:4,
+        minRows:3,
+        maxRows:5,
+        minColumns:4,
+        maxColumns:6,
         enemySpeed:3,
         shootingFrequency:100,
         bonusPoints:500,
-        totalGroups:1
+        totalGroups:5
     },
     2:{
-        rows:3,
-        columns:5,
+        minRows:3,
+        maxRows:5,
+        minColumns:4,
+        maxColumns:7,
         enemySpeed:3,
         shootingFrequency:95,
-        bonusPoints:750,
-        totalGroups:1
+        bonusPoints:1000,
+        totalGroups:5
     },
     3:{
-        rows:4,
-        columns:5,
+        minRows:3,
+        maxRows:5,
+        minColumns:4,
+        maxColumns:8,
         enemySpeed:3.5,
         shootingFrequency:90,
-        bonusPoints:1000,
-        totalGroups:1
+        bonusPoints:1500,
+        totalGroups:5
     },
     4:{
-        rows:4,
-        columns:6,
+        minRows:3,
+        maxRows:6,
+        minColumns:5,
+        maxColumns:8,
         enemySpeed:3.5,
-        shootingFrequency:80,
-        bonusPoints:1250,
-        totalGroups:1
+        shootingFrequency:85,
+        bonusPoints:2000,
+        totalGroups:5
     },
     5:{
-        rows:5,
-        columns:6,
+        minRows:4,
+        maxRows:6,
+        minColumns:5,
+        maxColumns:8,
         enemySpeed:4,
-        shootingFrequency:70,
-        bonusPoints:1500,
-        totalGroups:1
+        shootingFrequency:80,
+        bonusPoints:2500,
+        totalGroups:6
     },
     6:{
-        rows:5,
-        columns:7,
-        enemySpeed:4.5,
-        shootingFrequency:60,
-        bonusPoints:1750,
-        totalGroups:1
+        minRows:4,
+        maxRows:6,
+        minColumns:6,
+        maxColumns:8,
+        enemySpeed:4,
+        shootingFrequency:75,
+        bonusPoints:3000,
+        totalGroups:6
     },
     7:{
-        rows:6,
-        columns:7,
-        enemySpeed:5,
-        shootingFrequency:50,
-        bonusPoints:2000,
-        totalGroups:1
+        minRows:4,
+        maxRows:6,
+        minColumns:6,
+        maxColumns:8,
+        enemySpeed:4.5,
+        shootingFrequency:70,
+        bonusPoints:3500,
+        totalGroups:6
     },
     8:{
-        rows:6,
-        columns:8,
+        minRows:4,
+        maxRows:6,
+        minColumns:6,
+        maxColumns:10,
+        enemySpeed:4.5,
+        shootingFrequency:60,
+        bonusPoints:4000,
+        totalGroups:6
+    },
+    9:{
+        minRows:4,
+        maxRows:6,
+        minColumns:6,
+        maxColumns:10,
+        enemySpeed:5,
+        shootingFrequency:50,
+        bonusPoints:4500,
+        totalGroups:6
+    },
+    10:{
+        minRows:4,
+        maxRows:6,
+        minColumns:6,
+        maxColumns:12,
         enemySpeed:5,
         shootingFrequency:40,
-        bonusPoints:2500,
-        totalGroups:1
-    }
+        bonusPoints:5000,
+        totalGroups:6
+    },
 }
 
 let game={
@@ -398,7 +434,10 @@ function showLevelTransition(){
             levelSystem.showingTransition=false;
             levelSystem.groupsSpawned=0;
             levelSystem.groupsCleared=0;
-            levelSystem.totalGroupsForLevel=LEVEL_CONFIG[levelSystem.currentLevel].totalGroups;
+            const config = LEVEL_CONFIG[levelSystem.currentLevel];
+            if (config) {
+                levelSystem.totalGroupsForLevel = config.totalGroups;
+            }
 
             grids=[];
             invaderProjectiles=[];
@@ -433,9 +472,10 @@ function showVictoryScreen(){
 
     const victorySub = document.querySelector('#victoryScreen .victorySub');
     if (victorySub) {
-        victorySub.textContent = isNewHighScore
-            ? 'All Levels Completed! 🎉 New High Score!'
-            : 'All Levels Completed!';
+        victorySub.innerHTML = isNewHighScore
+        ? `All Levels Completed!
+           <div class="newHighScore">🎉 New High Score!</div>`
+        : 'All Levels Completed!';
     }
 
     if (victoryScreen) victoryScreen.style.display = "flex";
@@ -476,8 +516,10 @@ function spawnLevelGrid(){
     const config=LEVEL_CONFIG[levelSystem.currentLevel];
 
     const grid=new Grid({
-        rows:config.rows,
-        columns:config.columns,
+        minRows:config.minRows,
+        minColumns:config.minColumns,
+        maxRows:config.maxRows,
+        maxColumns:config.maxColumns,
         speed:config.enemySpeed
     });
 
@@ -605,16 +647,17 @@ function init(){
     score=0;
     hitLabels=[];
     scoreEl.innerHTML=score;
+    const startLevel=1;
 
     levelSystem={
-        currentLevel:1,
-        maxLevel:8,
+        currentLevel:startLevel,
+        maxLevel:10,
         levelComplete:false,
         showingTransition:false,
         allLevelsComplete:false,
         groupsSpawned:0,
         groupsCleared:0,
-        totalGroupsForLevel:LEVEL_CONFIG[1].totalGroups
+        totalGroupsForLevel:LEVEL_CONFIG[startLevel].totalGroups
     }
 
     keys={
@@ -691,8 +734,8 @@ function endGame(){
             gameOverTitle.innerHTML = `
                 Game Over
                 <span class="gameOverStats">Score: ${score} | High Score: ${highScore}</span>
-                <br/>
-                ${isNewHighScore ? '<span class="newHighScoreMsg">🎉 New High Score! Amazing! 🚀</span>' : ''}
+               
+                ${isNewHighScore ? '<span class="newHighScoreMsg"> <br/> 🎉 New High Score! Amazing! 🚀</span>' : ''}
             `;
         }
     }, 2000);
@@ -1054,26 +1097,26 @@ function animate(){
 
     const nowTime=performance.now();
 
-        if(!levelSystem.showingTransition && nowTime>=nextGridSpawnTime){
+        if (!levelSystem.showingTransition && nowTime >= nextGridSpawnTime) {
 
-            const topBusy=grids.some(grid=>grid.position.y<60);
+            const topLimit = levelSystem.currentLevel <= 6 ? 90 : 60;
 
-            if(topBusy){
-                nextGridSpawnTime=nowTime+250;
-            }
-            else{
-                if(levelSystem.groupsSpawned < levelSystem.totalGroupsForLevel) {
+            const topBusy = grids.some(grid => grid.position.y < topLimit);
+
+            if (topBusy) {
+                nextGridSpawnTime = nowTime + 250;
+            } else {
+                if (levelSystem.groupsSpawned < levelSystem.totalGroupsForLevel) {
                     spawnLevelGrid();
-                    
-                    spawnBufferMs=Math.max(MIN_GRID_GAP_MS,spawnBufferMs-50);
-                    const delay=Math.max(
+                
+                    spawnBufferMs = Math.max(MIN_GRID_GAP_MS, spawnBufferMs - 50);
+                    const delay = Math.max(
                         MIN_GRID_GAP_MS,
-                        spawnBufferMs+Math.random()*700
+                        spawnBufferMs + Math.random() * 700
                     );
-                    nextGridSpawnTime=nowTime+delay;
+                    nextGridSpawnTime = nowTime + delay;
                 }
             }
- 
         }
 
     const now = performance.now()
