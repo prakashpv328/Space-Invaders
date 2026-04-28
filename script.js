@@ -13,18 +13,20 @@ const restartButton=document.querySelector('#restartButton');
 const backToLobbyButton=document.querySelector('#backToLobbyButton')
 const startScreen=document.querySelector('#startScreen');
 const restartScreen=document.querySelector('#restartScreen');
-const scoreContainer=document.querySelector('#scoreContainer');
+
+const gameHeader=document.querySelector('#gameHeader');
+const levelEl=document.querySelector('#levelEl');
 
 const pauseToggleBtn=document.querySelector('#pauseToggleBtn');
 const pauseToggleIcon=document.querySelector('#pauseToggleIcon');
 
 const soundOptions=document.querySelectorAll('.soundOption');
 
-const powerUpTimersContainer=document.querySelector('#powerUpTimers');
+const powerUpTimersContainer=document.querySelector('#powerUpTimersHeader');
 
-const shieldTimerEl=document.querySelector('#shieldTimer');
-const machineGunTimerEl=document.querySelector('#machineGunTimer');
-const splitFireTimerEl=document.querySelector('#splitFireTimer');
+const shieldTimerEl=document.querySelector('#shieldTimerHeader');
+const machineGunTimerEl=document.querySelector('#machineGunTimerHeader');
+const splitFireTimerEl=document.querySelector('#splitFireTimerHeader');
 
 const shieldTimerBar=shieldTimerEl?.querySelector('.timerFill');
 const shieldTimerText=shieldTimerEl?.querySelector('.timerText');
@@ -50,7 +52,7 @@ let highScore = Number(localStorage.getItem(HIGH_SCORE_KEY)) || 0;
 
 
 const GAME_WIDTH = 1250;
-const GAME_HEIGHT = 700;
+const GAME_HEIGHT = 630;
 
 let player=null;
 let particles=[];
@@ -322,6 +324,7 @@ settingsPopup?.addEventListener('click', (e) => {
 document.querySelector('#victoryPlayAgain')?.addEventListener('click', () => {
     const victoryScreen = document.querySelector('#victoryScreen');
     if(victoryScreen) victoryScreen.style.display = "none";
+    levelEl.innerText=levelSystem.currentLevel;
     restartGame();
 });
 
@@ -434,6 +437,7 @@ function showLevelTransition(){
             levelSystem.showingTransition=false;
             levelSystem.groupsSpawned=0;
             levelSystem.groupsCleared=0;
+            levelEl.innerText=levelSystem.currentLevel;
             const config = LEVEL_CONFIG[levelSystem.currentLevel];
             if (config) {
                 levelSystem.totalGroupsForLevel = config.totalGroups;
@@ -463,10 +467,8 @@ function showVictoryScreen(){
     game.active = false;
     isPaused = false;
 
-    pauseToggleBtn.style.display = "none";
-    soundToggleBtn.style.display="none";
+    gameHeader.classList.add('hidden');
     if (powerUpTimersContainer) powerUpTimersContainer.style.display = "none";
-    scoreContainer.style.display = "none";
 
     if (victoryScoreEl) victoryScoreEl.textContent = score;
 
@@ -534,9 +536,8 @@ function startGame(){
 
     startScreen.style.display="none";
     restartScreen.style.display="none";
-    scoreContainer.style.display="block";
-    pauseToggleBtn.style.display="block";
-    soundToggleBtn.style.display="block";
+    gameHeader.classList.remove('hidden');
+    levelEl.innerText=levelSystem.currentLevel;
 
     isPaused=false;
     syncPauseIcon();
@@ -556,9 +557,8 @@ function restartGame(){
     if(gameOverTitle) gameOverTitle.textContent="Game Over";
 
     restartScreen.style.display="none";
-    scoreContainer.style.display="block";
-    pauseToggleBtn.style.display="block";
-    soundToggleBtn.style.display="block";
+    gameHeader.classList.remove('hidden');
+    levelEl.innerText=levelSystem.currentLevel;
 
     isPaused=false;
     syncPauseIcon();
@@ -581,10 +581,8 @@ function goToLobby(){
     if(gameOverTitle) gameOverTitle.textContent="Game Over";
 
     restartScreen.style.display="none";
-    scoreContainer.style.display="none";
     startScreen.style.display="flex";
-    pauseToggleBtn.style.display="none";
-    soundToggleBtn.style.display="none";
+    gameHeader.classList.add('hidden');
 
     if(powerUpTimersContainer)
         powerUpTimersContainer.style.display="none";
@@ -713,8 +711,7 @@ function endGame(){
     player.opacity=0;
     game.over=true;
     isPaused=false;
-    pauseToggleBtn.style.display="none";
-    soundToggleBtn.style.display="none";
+    gameHeader.classList.add('hidden');
 
     if(powerUpTimersContainer)
         powerUpTimersContainer.style.display="none";
@@ -780,8 +777,6 @@ function animate(){
 
     c.fillStyle="black";
     c.fillRect(0,0,canvas.width,canvas.height);
-
-    drawLevelIndicator();
 
     updatePowerUpTimers();
 

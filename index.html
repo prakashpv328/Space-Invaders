@@ -9,43 +9,51 @@
     </head>
     <body>
         <div id="parentDiv">
-            <p id="scoreContainer">
-              <span>Score:</span> <span id="scoreEl">0</span>
-            </p>
 
-            <div id="powerUpTimers">
-                <div id="shieldTimer" class="powerUpTimer hidden">
-                    <div class="timerIcon">🛡</div>
-                    <div class="timerBar">
-                        <div class="timerFill shield"></div>
+            <div id="gameHeader" class="hidden">
+
+                <div class="headerSection leftSection">
+
+                    <div class="levelDisplay">
+                        <span class="levelLabel">LV :</span>
+                        <span id="levelEl" class="levelValue">1</span>
                     </div>
-                    <span class="timerText">0s</span>
+
+                    <div id="powerUpTimersHeader">
+                        <div id="shieldTimerHeader" class="powerUpTimer hidden">
+                            <div class="timerIcon">🛡</div>
+                            <div class="timerBar"><div class="timerFill shield"></div></div>
+                            <span class="timerText">0s</span>
+                        </div>
+                        <div id="machineGunTimerHeader" class="powerUpTimer hidden">
+                            <div class="timerIcon">⚡</div>
+                            <div class="timerBar"><div class="timerFill machineGun"></div></div>
+                            <span class="timerText">0s</span>
+                        </div>
+                        <div id="splitFireTimerHeader" class="powerUpTimer hidden">
+                            <div class="timerIcon">⚔</div>
+                            <div class="timerBar"><div class="timerFill splitFire"></div></div>
+                            <span class="timerText">0s</span>
+                        </div>
+                    </div>
                 </div>
 
-                <div id="machineGunTimer" class="powerUpTimer hidden">
-                    <div class="timerIcon">⚡</div>
-                    <div class="timerBar">
-                        <div class="timerFill machineGun"></div>
+                <div class="headerSection centerSection">
+                    <div class="scoreDisplay">
+                        <span class="scoreLabel">SCORE</span>
+                        <span id="scoreEl" class="scoreValue">0</span>
                     </div>
-                    <span class="timerText">0s</span>
                 </div>
 
-                <div id="splitFireTimer" class="powerUpTimer hidden">
-                    <div class="timerIcon">⚔</div>
-                    <div class="timerBar">
-                        <div class="timerFill splitFire"></div>
-                    </div>
-                    <span class="timerText">0s</span>
+                <div class="headerSection rightSection">
+                    <button id="soundToggleBtn" type="button" aria-label="Sound On">
+                        <img id="soundToggleIcon" src="./img/components/sound_on.png" alt="Sound On">
+                    </button>
+                    <button id="pauseToggleBtn" type="button" aria-label="pause or Play">
+                        <img id="pauseToggleIcon" src="./img/components/pause.png" alt="Pause">
+                    </button>
                 </div>
             </div>
-
-            <button id="pauseToggleBtn" type="button" aria-label="pause or Play">
-                <img id="pauseToggleIcon" src="./img/components/pause.png" alt="Pause">
-            </button>
-
-            <button id="soundToggleBtn" type="button" aria-label="Sound On">
-                <img id="soundToggleIcon" src="./img/components/sound_on.png" alt="Sound On ">
-            </button>
 
             <canvas></canvas>
 
