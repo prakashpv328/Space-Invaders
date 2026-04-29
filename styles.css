@@ -318,6 +318,26 @@ canvas {
   text-shadow: 0 0 8px rgba(255, 224, 102, 0.5);
 }
 
+.highScoreDisplay{
+  margin-top:clamp(16px,2vw,24px);
+  margin-bottom:clamp(8px,1vw,12px);
+  text-align:center;
+}
+
+.highScoreText{
+  margin:0;
+  font-size:clamp(14px,1.6vw,20px);
+  font-weight:600;
+  color:rgba(255,255,255,0.8);
+  text-shadow:0 2px 4p rgba(0,0,0,0.6);
+}
+
+.highScoreText.hasScore{
+  color:#ffd700;
+  font-weight:700;
+  text-shadow:0 0 8px rgba(255,215,0,0.5);
+}
+
 .gameButton {
   cursor: pointer;
   position: relative;

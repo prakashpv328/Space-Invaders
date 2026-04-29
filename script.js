@@ -460,7 +460,13 @@ function showVictoryScreen(){
     if(levelSystem.allLevelsComplete) return;
 
     const prevHighScore = highScore;
-    updateHighScore();
+    if (score > highScore) {
+        highScore = score;
+        localStorage.setItem(HIGH_SCORE_KEY, highScore);
+    } else if (localStorage.getItem(HIGH_SCORE_KEY) === null) {
+        localStorage.setItem(HIGH_SCORE_KEY, score);
+        highScore = score;
+    }
     const isNewHighScore = score > prevHighScore;
 
     levelSystem.allLevelsComplete = true;
@@ -588,6 +594,7 @@ function goToLobby(){
         powerUpTimersContainer.style.display="none";
 
     syncPauseIcon();
+    updateLobbyHighScore();
 }
 
 startButton?.addEventListener("click",startGame);
@@ -702,6 +709,22 @@ function updateHighScore(){
     }
 }
 
+function updateLobbyHighScore(){
+    const highScoreText=document.querySelector('#highScoreText');
+    if(!highScoreText) return;
+
+    const hasPlayed = localStorage.getItem(HIGH_SCORE_KEY) !== null;
+
+    if(hasPlayed){
+        highScoreText.textContent=`High Score: ${highScore}`;
+        highScoreText.classList.add('hasScore');
+    }
+    else{
+        highScoreText.textContent="No Matches played yet";
+        highScoreText.classList.remove("hasScore");
+    }
+}
+
 function endGame(){
     if(game.over) return;
 
@@ -719,7 +742,15 @@ function endGame(){
     syncPauseIcon();
 
     const prevHighScore = highScore;
-    updateHighScore();
+    if (score > highScore) {
+        highScore = score;
+        localStorage.setItem(HIGH_SCORE_KEY, highScore);
+    } else if (localStorage.getItem(HIGH_SCORE_KEY) === null) {
+        // First game ever - save even if score is 0
+        localStorage.setItem(HIGH_SCORE_KEY, score);
+        highScore = score;
+    }
+
     const isNewHighScore = score > prevHighScore;
 
     setTimeout(() => {
@@ -1296,3 +1327,5 @@ addEventListener("keyup",({key})=>{
             break;
     }
 })
+
+updateLobbyHighScore();
